@@ -8,10 +8,11 @@ Django + Nginx + Gunicorn
 2. Install pipenv and packages
 
 ```bash[bash]
+cd app
 pip install pipenv
 pipenv install
 pipenv shell
-(django-crud) django-admin startproject config .
-(django-crud) python manage.py migrate
-(django-crud) python manage.py runserver
+(app) django-admin.py startproject config .
+(app) python manage.py migrate
+(app) python manage.py runserver
 ```
