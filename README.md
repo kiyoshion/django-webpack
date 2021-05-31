@@ -16,3 +16,14 @@ pipenv shell
 (app) python manage.py migrate
 (app) python manage.py runserver
 ```
+
+## Setup docker
+
+1. Make Dockerfile for Django
+2. Make dokcer-compose.yml for Django
+
+## Update settings.py
+
+1. SECRET_KEY
+2. DEBUG
+3. ALLOWED_HOSTS
