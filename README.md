@@ -48,3 +48,13 @@ docker-compose down -v
 docker-compose up -d --build
 docker-compose exec django python manage.py migrate
 ```
+
+### Setup auto migrate
+
+1. Add entrypoint.sh
+2. chmod +x entrypoint.sh
+3. Update Dockerfile
+
+```bash[bash]
+chmod +x app/entrypoint.sh
+```
