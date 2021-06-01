@@ -8,15 +8,8 @@ services:
       - ./app/:/usr/src/app/
     ports:
       - 8000:8000
-    environment:
-      - DEBUG=1
-      - SECRET_KEY=django-insecure-_9a9yki&_rn&!n7cb!n=h21+st*%%b-_-l)brwwv^c%tn5c7n=
-      - DATABASE_ENGINE=django.db.backends.postgresql
-      - DATABASE_DB=django_db
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=postgres
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
+    env_file:
+      - ./.env.dev
     depends_on:
         - postgres
 
