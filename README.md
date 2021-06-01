@@ -27,3 +27,9 @@ pipenv shell
 1. SECRET_KEY
 2. DEBUG
 3. ALLOWED_HOSTS
+
+## Start via docker-compose
+
+```bash[bash]
+docker-compose up -d --build
+```
