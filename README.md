@@ -33,3 +33,18 @@ pipenv shell
 ```bash[bash]
 docker-compose up -d --build
 ```
+
+## Setup postgres
+
+1. Add postgres service in docker-compose.yml
+2. Update .env for postgresql
+3. Update settings.py
+4. Update Dockerfile for psycopg2
+
+Up docker-compose and migrate. So we can see welcome page on localhost:8000.
+
+```bash[bash]
+docker-compose down -v
+docker-compose up -d --build
+docker-compose exec django python manage.py migrate
+```

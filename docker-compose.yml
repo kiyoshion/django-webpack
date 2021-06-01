@@ -8,6 +8,17 @@ services:
         - ./app/:/usr/src/app/
     ports:
         - 8000:8000
+    depends_on:
+        - postgres
+
+  postgres:
+    image: postgres:alpine
+    volumes:
+        - postgres_data:/var/lib/postgresql/data
     environment:
-        - DEBUG=1
-        - SECRET_KEY=hoge
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_DB=django_db
+
+volumes:
+  postgres_data:
