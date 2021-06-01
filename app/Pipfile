@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 Django = "==3.2.3"
-django-environ = "*"
+gunicorn = "==20.0.4"
 
 [requires]
 python_version = "3.8"

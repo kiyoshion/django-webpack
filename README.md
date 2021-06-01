@@ -58,3 +58,19 @@ docker-compose exec django python manage.py migrate
 ```bash[bash]
 chmod +x app/entrypoint.sh
 ```
+
+
+## Setup Gunicorn
+
+1. Add gunicorn in Pipfile
+2. Add docker-compose.prod.yml and update
+3. Add entrypoint.prod.sh
+4. Add Dockerfile.prod
+5. Update docker-compose.prod.yml for new Dockerfile.prod
+6. CMD and check localhost:8000/admin
+
+```bash[bash]
+docker-compose down -v
+docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.prod.yml exec django python manage.py migrate --noinput
+```
