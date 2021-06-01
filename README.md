@@ -74,3 +74,18 @@ docker-compose down -v
 docker-compose -f docker-compose.prod.yml up -d --build
 docker-compose -f docker-compose.prod.yml exec django python manage.py migrate --noinput
 ```
+
+
+## Setup Nginx
+
+1. Make nginx dir to root
+2. Add Dockerfile
+3. Add nginx.conf
+4. Add nginx in docker-compose.prod.yml
+5. Check connection of nginx
+
+```bash[bash]
+docker-compose down -v
+docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.prod.yml exec django python manage.py migrate --noinput
+```
