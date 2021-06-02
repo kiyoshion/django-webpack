@@ -1,11 +1,15 @@
 # Django CRUD app on Docker
 
-Django + Nginx + Gunicorn + Dockerのリポジトリです。以下の書籍を踏襲し、Django 3.2に対応。またDockerでフレキシブルな構成にしています。
+Django + Nginx + Gunicorn + Dockerのリポジトリです。以下のソースを参考に、Django 3.2に対応。またdocker-composeでフレキシブルな構成にしています。
 
 - 『現場で使えるDjangoの教科書《基礎編》』
 - 『現場で使えるDjangoの教科書《実践編》』
+- <a href="https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/" target="_blank">Dockerizing Django with Postgres, Gunicorn, and Nginx</a>
+
 
 ### 「現場で使えるDjangoの教科書《基礎編》」のベストプラクティス一覧
+
+🎉ベストプラクティス10個
 
 1. 分かりやすいプロジェクト構成
 2. アプリケーションごとにurls.pyを配置する
@@ -15,17 +19,48 @@ Django + Nginx + Gunicorn + Dockerのリポジトリです。以下の書籍を�
 6. ベーステンプレートを用意する
 7. こんなときはModelFormを継承しよう
 8. メッセージフレームワークを使う
+9. 個人の開発環境の設定はlocal_settings.pyに書く
+10. シークレットな変数は.envファイルに書く
+
+#### 番外 便利なDjangoパッケージを使おう(django-debug-toolbar)
+
+```bash
+pipenv install django-debug-toolbar
+```
+
+```python[config/settings.py]
+if DEBUG:
+  def show_toolbar(request):
+    return True
+
+  INSTALLED_APPS += (
+    'django_toolbar',
+  )
+  MIDDLEWARE += (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+  )
+  DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+  }
+```
+
+```python[config/urls.py]
+if settings.DEBUG:
+  import debug_toolbar
+
+  urlpatterns = [path('__debug__/', include(debug_toolbar.urls))] + urlpatterns
+```
 
 
-#### 1. 分かりやすいプロジェクト構成
+#### BP1 分かりやすいプロジェクト構成
 
 ・問題点
-- ベースディレクトリと設定ディレクトリ名が同じでややこしい
-- テンプレートと静的ファイルがアプリケーションごとにバラバラに配置されてしまう
+- ベースディレクトリと設定ディレクトリ名が同じでややこしい。
+- テンプレートと静的ファイルがアプリケーションごとにバラバラに配置されてしまう。
 
 ・ベストプラクティス
 - startprojectで生成されるディレクトリ名を変更する。「config」「default」「root」など。
-- 後述の「静的ファイル関連の設定」で対応
+- 本番環境ではcollectstaticコマンドでstaticfilesディレクトリにまとめる。開発環境(runserver)は自動で配信してくれる。
 
 ```bash[bash]
 mkdir mysite && cd mysite
@@ -34,12 +69,20 @@ django-admin startproject config .
 tree
 mysite
  |-- manage.py
- `== config
-    |== __init__.py
+ `-- config
+    |-- __init__.py
+```
+
+```python[config/settings.py]
+STATIC_URL = '/staticfiles/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/mediafiles/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 ```
 
 
-#### 2. アプリケーションごとにurls.pyを配置する
+#### BP2 アプリケーションごとにurls.pyを配置する
 
 startproject実行時に生成されるurls.pyのみにURLパターンの設定を追加していくと、設定がどんどん肥大化して管理が大変になる。urls.pyを分割し、アプリケーションディレクトリごとに1つずつurls.pyを配置する。
 
@@ -70,11 +113,11 @@ urlpatterns = [
 ```
 
 ・注意点
-- startappコマンドでは、アプリケーションディレクトリ内にurls.pyは生成されないので、自分で作成する
-- app_name(名前空間)を設定する
+- startappコマンドではアプリケーションディレクトリ内にurls.pyは生成されない。自分で作成する。
+- app_name(名前空間)を設定する。
 
 
-#### 3. Userモデルを拡張する
+#### BP3 Userモデルを拡張する
 
 デフォルトで提供されるUserモデルには以下のフィールドがある。
 
@@ -100,10 +143,9 @@ class models.User
 
 デフォルトのフィールド以外にも必要なフィールドがある場合は、拡張する必要がある。拡張する方法はおもに以下の3つ。
 
-1. 抽象クラスAbstractBaseUserを継承する -> リリース前でガラッと変えたいならこれ
-2. 抽象クラスAbstractUserを継承する -> リリース前でチョロっと追加したいならこれ
-3. 別モデルを作ってOneToOneFieldで関連させる -> リリース後ならこれ
-
+1. 抽象クラスAbstractBaseUserを継承する -> リリース前でガラッと変えたいとき
+2. 抽象クラスAbstractUserを継承する -> リリース前でチョロっと追加したいとき
+3. 別モデルを作ってOneToOneFieldで関連させる -> リリースしたあと
 
 ex: AbstractUserを継承する場合
 
@@ -126,22 +168,22 @@ AUTH_USER_MODEL = 'accounts.CustomUser' # <アプリケーション名>.<モデ�
 ```
 
 
-#### 4. 発行されるクエリを確認する
+#### BP4 発行されるクエリを確認する
 
-オブジェクトの検索が実行されるときにどのようなクエリが発行されるか　ーモデルの使い方は合っているか？パフォーマンスに影響はないか？ー　確認する。
+オブジェクトの検索が実行されるときにどのようなクエリが発行されるか　ーモデルの使い方は合っているか？パフォーマンスに影響はないか？ー　を確認する。
 
 1. Djangoシェルを使う
 2. ロギングの設定を変更する
-3. django-debug-toolbarのSQLパネルを使う(後述)
+3. django-debug-toolbarのSQLパネルを使う
 
 
-#### 5. selected_related / prefetch_relatedでクエリ本数を減らす
+#### BP5 select_related / prefetch_relatedでクエリ本数を減らす
 
 N+1問題を回避する。モデルでリレーション先のデータを取得するときに使う。
 
 |METHOD|NOTE|
 |---|---|
-|selected_related|「一」や「多」側から「一」のオブジェクトをJOINで取得|
+|select_related|「一」や「多」側から「一」のオブジェクトをJOINで取得|
 |prefetch_related|「一」や「多」側から「多」のオブジェクトを取得してキャッシュに保持|
 
 ```python
@@ -153,9 +195,10 @@ SELECT * FROM book INNER JOIN publisher ON book.publisher_id = publisher.id
 Book.objects.all().prefetch_related('authors')
 ```
 
-#### 6. ベーステンプレートを用意する
 
-テンプレートの共通部分　ーheadタグやbodyタグ終了前のJavaScriptー　をbase.htmlに分割する。
+#### BP6 ベーステンプレートを用意する
+
+テンプレートの共通部分(headタグやbodyタグ前のJavaScript)はbase.htmlに書いて、各テンプレート内で継承する。
 
 ```bash
 `-- templates
@@ -165,9 +208,9 @@ Book.objects.all().prefetch_related('authors')
 ```
 
 
-#### 7. こんなときはModelFormを継承しよう
+#### BP7 こんなときはModelFormを継承しよう
 
-通常のフォームが継承しているdjango.forms.Formの代わりにdjango.forms.models.ModelFormを継承することで特定のモデルのフィールド定義を再利用できる。デフォルトのフォームバリデーションの他にモデルのバリデーションが走る。
+通常のフォームが継承しているdjango.forms.Formの代わりにdjango.forms.models.ModelFormを継承することで、特定のモデルのフィールド定義を再利用できる。デフォルトのフォームバリデーションの他にモデルのバリデーションが走る。
 
 ```python[accounts/forms.py]
 from django import forms
@@ -213,7 +256,59 @@ user.save()
 ```
 
 
-#### 8. メッセージフレームワークを使う
+#### BP8 メッセージフレームワークを使う
+
+フラッシュメッセージとも言う。MessageMiddlewareを使う。startproject
+したときにデフォルトで有効化されている。デフォルトではCookieを使う設定になっているが、Cookieだとリダイレクトしたときにメッセージが表示されない場合があるのでSessionを使うように変更する。
+
+```python[config/settings.py]
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+```
+
+```python[accounts/views.py]
+from django.contrib import messages
+from django.urls import reverse
+from django.views import View
+
+class LoginView(View):
+  def post(self, *args, **kwargs):
+  ...
+  messages.info(request, "ログインしました。")
+
+  return redirect(reverse('item:index'))
+```
+
+templatesディレクトリに_message.htmlを作成する。
+
+```python[templates/_messages.html]
+{% if messages %}
+<div class="ui relazed divided list">
+  {% for message in messages %}
+  <div class="ui {% if message.tags %}{{ message.tags }}{% endif %} message">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+```
+
+
+#### BP9 個人の開発環境の設定はlocal_settings.pyに書く
+
+このリポジトリでは開発環境用(docker-compose.yml)と本番環境用(docker-compose.prod.yml)で環境を分割しているので省略。ちなみに『現場でDjango』の構成は以下。
+
+```bash
+config/settings
+|-- __init__.py
+|-- base.py
+|-- local.py
+|-- production.py
+`-- test.py
+```
+
+#### BP10 シークレットな変数は.envファイルに書く
+
+パスワードなどの機密性の高い変数はGit管理下に置かない。現場でDjangoはdjango-environパッケージを使っているが、このリポジトリではcontainerのOSに環境変数を設定している。上述の通り、開発環境と本番環境でdocker-compose.yml(container)を分けているでこのリポジトリでは使わない。
 
 
 ## Setup environment
