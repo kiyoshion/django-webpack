@@ -12,7 +12,7 @@ RUN apk update \
     && apk del build-deps
 
 RUN pip install --upgrade pip \
-  && pip install pipenv
+  && pip install pipenv 
 
 COPY ./Pipfile /usr/src/app/Pipfile
 

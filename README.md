@@ -34,7 +34,7 @@ if DEBUG:
     return True
 
   INSTALLED_APPS += (
-    'django_toolbar',
+    'debug_toolbar',
   )
   MIDDLEWARE += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',

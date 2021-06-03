@@ -1,0 +1,10 @@
+{% extends '../base.html' %}
+
+{% block title %}Item Detail{% endblock %}
+
+{% block content %}
+<h1>{{ object.title }}</h1>
+<span>{{ object.created_at }} {{ object.updated_at }}</span>
+<p>{{ object.body }}</p>
+<a href="{% url 'item.list' %}">Back</a>
+{% endblock %}

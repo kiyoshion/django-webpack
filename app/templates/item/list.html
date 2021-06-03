@@ -1,0 +1,15 @@
+{% extends '../base.html' %}
+
+{% block title %}Item List{% endblock %}
+
+{% block content %}
+<h1>Hello Django!</h1>
+<a href="{% url 'item.create' %}">新規作成</a>
+<ul>
+{% for item in object_list %}
+<li>
+  <a href="{% url 'item.detail' item.id %}">{{ item.created_at }} - {{ item.title }}</a>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
