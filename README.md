@@ -7,9 +7,9 @@ Django + Nginx + Gunicorn + Dockerのリポジトリです。以下のソース�
 - <a href="https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/" target="_blank">Dockerizing Django with Postgres, Gunicorn, and Nginx</a>
 
 
-### 「現場で使えるDjangoの教科書《基礎編》」のベストプラクティス一覧
+### 「現場で使えるDjangoの教科書《基礎編》」のベストプラクティス
 
-🎉ベストプラクティス10個
+🎉　ベストプラクティス10個
 
 1. 分かりやすいプロジェクト構成
 2. アプリケーションごとにurls.pyを配置する
@@ -309,6 +309,175 @@ config/settings
 #### BP10 シークレットな変数は.envファイルに書く
 
 パスワードなどの機密性の高い変数はGit管理下に置かない。現場でDjangoはdjango-environパッケージを使っているが、このリポジトリではcontainerのOSに環境変数を設定している。上述の通り、開発環境と本番環境でdocker-compose.yml(container)を分けているでこのリポジトリでは使わない。
+
+
+
+### 「現場で使えるDjangoの教科書《実践編》」の開発フロー
+
+1. 認証周りをサクッと実装(djangp-allauth)
+2. 開発のヒント(Bootstrap4対応) <- やんない
+3. 開発のヒント(Ajax対応とJSONレスポンス)
+4. 開発のヒント(ファイルアップロード)
+5. ユニットテスト
+6. デプロイ
+7. セキュリティのTIPS
+8. 高速化のためのTIPS
+9. メール送信
+
+
+#### 認証周りをサクッと実装(djangp-allauth)
+
+1. Install django-allauth
+2. Update settings.py
+3. Update urls.py
+
+
+#### 開発のヒント(Ajax対応とJSONレスポンス)
+
+DjangoでAjaxを利用するには主に3通り。
+
+1. テンプレートでajaxメソッドを利用してAjaxリクエストをサーバに送信
+2. ビューでリクエストパラメータを取得し、JSONレスポンスオブジェクトを返す
+3. ajax()のコールバックでJSONオブジェクトを受け取る
+
+```python[templates/form.html]
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+  const form = document.querySelector("form");
+  form.addEventListener('submit', (event) => {
+    event.preventDefault()
+
+    let data = new FormData();
+
+    data.append('title', document.querySelector('input[name="title"]').value)
+    data.append('note', document.querySelector('input[name="note"]').value)
+    data.append('cstfmiddlewaretoken', '{{csrf_token}}')
+
+    axios.post('create_post/', data)
+      .then(res => alert("Form submitted"))
+      .catch(error => console.log(error))
+  })
+</script>
+```
+
+```python[views.py]
+from django.http import JsonResponse
+
+def createPost(request):
+  if request.method == 'POST':
+    title = request.POST.get('title')
+    note = request.POST.get('note')
+    Note.objects.create(
+      title=title,
+      note=note
+    )
+
+  return JsonResponse({"status": 'Success'})
+  # dict以外のオブジェクトを返すときはsafe=Falseを指定する
+  # return JsonResponse([{'a': 1}, {'b': 2}], safe=False)
+```
+
+JavaScriptでCookieからCSRFtokenを取得する関数を定義する場合。
+
+```javascript[static/js/common.js]
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    cookieValue = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('csrftoken'))
+      .split('=')[1];
+  }
+
+  return cookieValue
+}
+```
+
+
+#### 開発のヒント(ファイルアップロード)
+
+Djangoではユーザがアップロードした静的ファイルをメディアファイルと呼ぶ。アップロードファイル関連の便利なパッケージがある。
+
+1. Pillow
+2. python-magic <- ファイルヘッダのチェック
+3. django-imagekit <- サムネ生成
+4. djnago-cleanup <- オリジナルファイルの削除
+5. django-storage <- S3
+6. boto3 <- S3
+
+
+#### ユニットテスト
+
+|NAME|NOTE|
+|---|---|
+|testコマンド|manage.py経由でユニットテストを実行する。|
+|テストランナー|テストクラスやテストメソッドを自動で収集する。|
+|TestCaseクラス|Django標準のテストクラス。|
+|テストクライアント|テストメソッド内でブラウザのような振る舞いをしてくれるシミュレータ。|
+
+
+##### テストクラス・テストメソッドの書き方
+
+startappで生成されるtest.pyは削除してtestsディレクトリを切る。
+
+```bash
+|-- app
+|   |-- __init__.py
+|   |-- tests
+|       |-- _init__.py
+|       |-- test_forms.py
+|       |-- test_models.py
+|       `-- test_views.py
+```
+
+#### 高速化のためのTIPS
+
+##### セッションのバックエンドをキャッシュサーバにする
+
+1. sudo apt install -y memcached
+2. (venv) pipenv install python-memcached
+3. Update settings.py for CACHES
+
+
+##### 任意のviewのレスポンスをキャッシュする
+
+JSONを返すviewはキャッシュを有効活用できる。
+
+
+##### キャッシュのクリア
+
+1. pipenv install django-extensions
+2. Add INSTALLED_APPS in settings.py
+
+
+##### その他の高速化の手段
+
+1. CONN_MAX_AGE <- DBの接続時間を設定する
+2. ミドルウェアの処理を軽減する
+3. JS/CSSファイルの圧縮、静的ファイルのCDN化 <- django-compressor
+
+
+#### メール送信
+
+ローカルではconsoleに出力させる。
+
+```bash
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+```
+
+```bash
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_USE_LOCALTIME = False
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False
+EMAIL_SSL_CERTFILE = None
+EMAIL_SSL_KEYFILE = None  EMAIL_TIMEOUT = None  DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+SERVER_EMAIL = 'root@localhost'
+```
 
 
 ## Setup environment
