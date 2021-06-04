@@ -3,6 +3,10 @@
 {% block title %}Item Create{% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
+=======
+<h1>アイテムの新規作成</h1>
+>>>>>>> feature/item
 <form action="" method="POST">
   {% csrf_token %}
   {{ form }}
@@ -10,4 +14,8 @@
     <button type="submit">send</button>
   </div>
 </form>
+<<<<<<< HEAD
+=======
+<a href="{% url 'item.list' %}">Back</a>
+>>>>>>> feature/item
 {% endblock %}

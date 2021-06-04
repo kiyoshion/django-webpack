@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Django CRUD App{% endblock %}
+
+{% block content %}
+<h1>Hello Django</h1>
+<ul>
+{% for item in item_list %}
+<li>
+  <a href="{% url 'item.detail' item.id %}">{{ item.created_at }} - {{ item.title }}</a>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
