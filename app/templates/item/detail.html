@@ -6,12 +6,9 @@
 <h1>{{ object.title }}</h1>
 <span>{{ object.created_at }} {{ object.updated_at }}</span>
 <p>{{ object.body }}</p>
-<<<<<<< HEAD
-=======
 <div>
   <a href="{% url 'item.update' object.pk %}">Edit</a>
   <a href="{% url 'item.delete' object.pk %}">Delete</a>
 </div>
->>>>>>> feature/item
 <a href="{% url 'item.list' %}">Back</a>
 {% endblock %}
