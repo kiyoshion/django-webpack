@@ -14,7 +14,7 @@ services:
         - postgres
 
   postgres:
-    image: postgres:alpine
+    image: postgres
     volumes:
         - postgres_data:/var/lib/postgresql/data
     environment:

@@ -15,7 +15,7 @@ class ItemDetail(DetailView):
 class ItemCreate(CreateView):
   model = ItemModel
   template_name = 'item/create.html'
-  fields = ('title', 'body', 'thumbnail')
+  fields = ('title', 'body', 'image')
   success_url = reverse_lazy('item.list')
 
 class ItemDelete(DeleteView):
@@ -26,5 +26,5 @@ class ItemDelete(DeleteView):
 class ItemUpdate(UpdateView):
   model = ItemModel
   template_name = 'item/update.html'
-  fields = ('title', 'body', 'thumbnail')
+  fields = ('title', 'body', 'image')
   success_url = reverse_lazy('item.list')

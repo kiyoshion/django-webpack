@@ -9,6 +9,8 @@ verify_ssl = true
 Django = "==3.2.3"
 gunicorn = "==20.0.4"
 pillow = "*"
+django-imagekit = "*"
+django-cleanup = "*"
 
 [requires]
 python_version = "3.8"
