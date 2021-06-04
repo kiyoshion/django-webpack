@@ -1,10 +1,15 @@
 {% extends '../base.html' %}
 
+{% load static %}
+
 {% block title %}Item Detail{% endblock %}
 
 {% block content %}
 <h1>{{ object.title }}</h1>
 <span>{{ object.created_at }} {{ object.updated_at }}</span>
+{% if object.thumbnail %}
+  <img src="{{ object.thumbnail.url }}" alt="{{ object.title }}">
+{% endif %}
 <p>{{ object.body }}</p>
 <div>
   <a href="{% url 'item.update' object.pk %}">Edit</a>
