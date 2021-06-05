@@ -8,8 +8,29 @@
   {% csrf_token %}
   {{ form }}
   <div>
+    <img id="img-preview" style="width: 200px;object-fit: cover;">
+  </div>
+  <div>
     <button type="submit">send</button>
   </div>
 </form>
 <a href="{% url 'item.list' %}">Back</a>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  const img = document.querySelector('input[name="image"]')
+  const imgPreview = document.querySelector('#img-preview')
+  img.addEventListener('change', (event) => {
+    const file = event.target.files[0]
+
+    const render = new FileReader()
+    render.onload = () => {
+      const img = new Image()
+      img.src = render.result
+      imgPreview.setAttribute('src', img.src)
+    }
+    render.readAsDataURL(file)
+  })
+</script>
 {% endblock %}

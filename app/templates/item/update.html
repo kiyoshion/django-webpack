@@ -7,8 +7,30 @@
 <form action="" method="POST" enctype="multipart/form-data">
   {% csrf_token %}
   {{ form }}
+  <div id="img-preview">
+    <img id="img-tag" src="{{ object.image_thumbnail.url }}" style="width:200px;" alt="">
+  </div>
   <div>
     <button type="submit">send</button>
   </div>
 </form>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  const img = document.querySelector('input[name="image"]')
+  const imgPreview = document.querySelector('#img-preview')
+  const imgTag = document.querySelector('#img-tag')
+  img.addEventListener('change', (event) => {
+    const file = event.target.files[0]
+
+    const render = new FileReader()
+    render.onload = () => {
+      const img = new Image()
+      img.src = render.result
+      imgTag.setAttribute('src', img.src)
+    }
+    render.readAsDataURL(file)
+  })
+</script>
 {% endblock %}
