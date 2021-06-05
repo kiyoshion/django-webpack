@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'django_cleanup',
     'imagekit',
+    'user.apps.UserConfig',
     'item.apps.ItemConfig',
 ]
 
@@ -141,13 +142,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentications
 
+AUTH_USER_MODEL = 'user.CustomUser'
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_UERNAME_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
@@ -155,6 +159,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 SITE_ID = 1
 
 LOGIN_REDIRECT_URL = 'home'
+ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Mail
