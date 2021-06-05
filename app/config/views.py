@@ -10,3 +10,8 @@ class IndexView(TemplateView):
     return context
 
 index = IndexView.as_view()
+
+class HomeView(TemplateView):
+  template_name = 'home.html'
+
+home = HomeView.as_view()
