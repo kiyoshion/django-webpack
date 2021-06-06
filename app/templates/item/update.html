@@ -8,12 +8,17 @@
   {% csrf_token %}
   {{ form }}
   <div id="img-preview">
+    {% if object.image %}
     <img id="img-tag" src="{{ object.image_thumbnail.url }}" style="width:200px;" alt="">
+    {% else %}
+    <img id="img-tag" style="width:200px;">
+    {% endif %}
   </div>
   <div>
     <button type="submit">send</button>
   </div>
 </form>
+<a href="{% url 'item.list' %}">Back</a>
 {% endblock %}
 
 {% block extrajs %}
