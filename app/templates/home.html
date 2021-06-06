@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block head_title %}Home | {{ block.super }}{% endblock %}
 
 {% block content %}
 {% if user.is_authenticated %}

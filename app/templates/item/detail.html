@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Item Detail{% endblock %}
+{% block head_title %}{{ object.title }} | {{ block.super }}{% endblock %}
 
 {% block content %}
 <h1>{{ object.title }}</h1>

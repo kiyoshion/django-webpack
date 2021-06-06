@@ -1,6 +1,6 @@
 {% extends '../base.html' %}
 
-{% block title %}Item Update{% endblock %}
+{% block head_title %}{{ object.title }} | {{ block.super }}{% endblock %}
 
 {% block content %}
 <h1>アイテムを編集</h1>

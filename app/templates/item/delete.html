@@ -1,6 +1,6 @@
 {% extends '../base.html' %}
 
-{% block title %}Item Delete{% endblock %}
+{% block head_title %}{{ object.title }} | {{ block.super }}{% endblock %}
 
 {% block content %}
 <h1>アイテムを削除</h1>
