@@ -4,8 +4,14 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-<h1>Hello, {{ user.get_username }}</h1>
-<a href="{% url 'account_logout' %}">Logout</a>
+<h1>こんにちは, {% if user.displayname != '' %}{{ user.displayname }}{% endif %}@{{ user.get_username }}さん</h1>
+{% if user.avatar %}
+<img src="{{ user.avatar.url }}" alt="{{ user.username }}">
+{% endif %}
+<div>
+  <a href="{% url 'account_logout' %}">Logout</a>
+  <a href="{% url 'user.update' user.id %}">プロフィール編集</a>
+</div>
 {% else %}
 <h1>Not Logged in</h1>
 <a href="{% url 'account_login' %}">Login</a>

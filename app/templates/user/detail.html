@@ -1,0 +1,23 @@
+{% extends '../base.html' %}
+
+{% load static %}
+
+{% block head_title %}{{ object.username }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+{% if object.displayname != '' %}
+<h1>{{ object.displayname }}</h1>
+{% else  %}
+<h1>{{ object.username }}</h1>
+{% endif %}
+{% if object.plofile %}
+<p>{{ object.profile }}</p>
+{% endif %}
+{% if object.avatar %}
+  <div>
+    <h2>Thumbnail</h2>
+    <img src="{{ object.avatar.url }}" alt="{{ object.username }}">
+  </div>
+{% endif %}
+<p>{{ object.body }}</p>
+{% endblock %}

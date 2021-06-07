@@ -1,0 +1,41 @@
+{% extends '../base.html' %}
+
+{% block head_title %}{{ object.username }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1>ユーザ情報を編集</h1>
+<form action="" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form }}
+  <div id="img-preview">
+    {% if object.avatar %}
+    <img id="img-tag" src="{{ object.avatar.url }}" style="width:150px;" alt="">
+    {% else %}
+    <img id="img-tag" style="width:150px;">
+    {% endif %}
+  </div>
+  <div>
+    <button type="submit">send</button>
+  </div>
+</form>
+<a href="{% url 'home' %}">Back</a>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  const img = document.querySelector('input[name="avatar"]')
+  const imgPreview = document.querySelector('#img-preview')
+  const imgTag = document.querySelector('#img-tag')
+  img.addEventListener('change', (event) => {
+    const file = event.target.files[0]
+
+    const render = new FileReader()
+    render.onload = () => {
+      const img = new Image()
+      img.src = render.result
+      imgTag.setAttribute('src', img.src)
+    }
+    render.readAsDataURL(file)
+  })
+</script>
+{% endblock %}

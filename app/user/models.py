@@ -4,7 +4,6 @@ from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill
 import uuid
 
-
 class CustomUser(AbstractUser):
   class Meta:
     db_table = 'custom_user'
@@ -12,6 +11,8 @@ class CustomUser(AbstractUser):
   def user_directory_path(instance, filename):
     return 'user/{}/{}.{}'.format(instance.id, str(uuid.uuid4()), filename.split('.')[-1])
 
+  displayname = models.CharField(max_length=50, default='', blank=True, null=True)
+  profile = models.TextField(default='', blank=True, null=True)
   avatar = ProcessedImageField(blank=True,
     null=True,
     upload_to=user_directory_path,
