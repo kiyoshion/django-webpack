@@ -5,7 +5,10 @@
 {% block content %}
 {% if user.is_authenticated %}
 <h1>こんにちは, {% if user.displayname != '' %}{{ user.displayname }}{% endif %}@{{ user.get_username }}さん</h1>
-<img src="{{ user.avatar.url }}" alt="{{ user.username }}" width="70" height="70">
+<form id="avatar-form" method="POST" enctype="multipart/form-data">
+  <input id="input" type="file" name="avatar" style="display: none">
+</form>
+<img id="avatar" src="{{ user.avatar.url }}" alt="{{ user.username }}" width="70" height="70">
 <div>
   <a href="{% url 'account_logout' %}">Logout</a>
   <a href="{% url 'user.update' user.id %}">プロフィール編集</a>
@@ -15,4 +18,40 @@
 <a href="{% url 'account_login' %}">Login</a>
 <a href="{% url 'account_signup' %}">Singup</a>
 {% endif %}
+{% endblock %}
+
+{% block extrajs %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+  const avatarForm = document.querySelector('#avatar-form')
+  const avatar = document.querySelector('#avatar')
+  const input = document.querySelector('#input')
+
+  avatar.addEventListener('click', () => {
+    input.click()
+    return false
+  })
+
+  input.addEventListener('change', () => {
+    let data = new FormData()
+    let file = input.files[0]
+    data.append('avatar', file)
+    data.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+
+    let userId = '{{ user.id }}'
+    axios.post(`/user/avatarupload/${userId}/`, data, {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    })
+      .then(res => {
+        setNewAvatar(res.data.url)
+      })
+      .catch(error => console.log(error))
+  })
+
+  function setNewAvatar(url) {
+    avatar.src = url
+  }
+</script>
 {% endblock %}
