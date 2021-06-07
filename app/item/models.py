@@ -6,7 +6,8 @@ import uuid
 
 def upload_directory_path(instance, filename):
   return 'item/{}/{}.{}'.format(instance.id, str(uuid.uuid4()), filename.split('.')[-1])
-class ItemModel(models.Model):
+
+class Item(models.Model):
   title = models.CharField(max_length=50)
   body = models.TextField()
   author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

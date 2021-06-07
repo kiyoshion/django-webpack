@@ -2,18 +2,18 @@ from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 
-from .models import ItemModel
+from .models import Item
 
 class ItemList(ListView):
-  model = ItemModel
+  model = Item
   template_name = 'item/list.html'
 
 class ItemDetail(DetailView):
-  model = ItemModel
+  model = Item
   template_name = 'item/detail.html'
 
 class ItemCreate(CreateView):
-  model = ItemModel
+  model = Item
   template_name = 'item/create.html'
   fields = ('title', 'body', 'image')
   success_url = reverse_lazy('item.list')
@@ -23,12 +23,12 @@ class ItemCreate(CreateView):
     return super().form_valid(form)
 
 class ItemDelete(DeleteView):
-  model = ItemModel
+  model = Item
   template_name = 'item/delete.html'
   success_url = reverse_lazy('item.list')
 
 class ItemUpdate(UpdateView):
-  model = ItemModel
+  model = Item
   template_name = 'item/update.html'
   fields = ('title', 'body', 'image')
   success_url = reverse_lazy('item.list')
