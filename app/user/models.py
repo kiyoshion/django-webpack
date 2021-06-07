@@ -15,6 +15,7 @@ class CustomUser(AbstractUser):
   profile = models.TextField(default='', blank=True, null=True)
   avatar = ProcessedImageField(blank=True,
     null=True,
+    default='public/avatar.svg',
     upload_to=user_directory_path,
     processors=[ResizeToFill(150, 150)],
     options={'quality': 80})

@@ -5,9 +5,7 @@
 {% block content %}
 {% if user.is_authenticated %}
 <h1>こんにちは, {% if user.displayname != '' %}{{ user.displayname }}{% endif %}@{{ user.get_username }}さん</h1>
-{% if user.avatar %}
-<img src="{{ user.avatar.url }}" alt="{{ user.username }}">
-{% endif %}
+<img src="{{ user.avatar.url }}" alt="{{ user.username }}" width="70" height="70">
 <div>
   <a href="{% url 'account_logout' %}">Logout</a>
   <a href="{% url 'user.update' user.id %}">プロフィール編集</a>
