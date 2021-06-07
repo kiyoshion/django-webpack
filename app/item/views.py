@@ -28,8 +28,16 @@ class ItemDelete(LoginRequiredMixin, DeleteView):
   template_name = 'item/delete.html'
   success_url = reverse_lazy('item.list')
 
+  def get_queryset(self):
+    queryset = super().get_queryset()
+    return queryset.filter(author=self.request.user)
+    
 class ItemUpdate(LoginRequiredMixin, UpdateView):
   model = Item
   template_name = 'item/update.html'
   fields = ('title', 'body', 'image')
   success_url = reverse_lazy('item.list')
+
+  def get_queryset(self):
+    queryset = super().get_queryset()
+    return queryset.filter(author=self.request.user)

@@ -1,3 +1,4 @@
+from django.db.models import query
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView
@@ -14,3 +15,7 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
   template_name = 'user/update.html'
   fields = ('displayname', 'avatar', 'profile')
   success_url = reverse_lazy('home')
+
+  def get_queryset(self):
+    queryset = super().get_queryset()
+    return queryset.filter(id=self.request.user.id)
