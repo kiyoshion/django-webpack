@@ -165,3 +165,8 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
 # Mail
 
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND')
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL')
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
