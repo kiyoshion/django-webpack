@@ -6,6 +6,7 @@
 
 {% block content %}
 <h1>{{ object.title }}</h1>
+<p>by {{ object.author }}</p>
 <span>{{ object.created_at }} {{ object.updated_at }}</span>
 {% if object.image_thumbnail %}
   <div>

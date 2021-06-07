@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 
@@ -12,7 +13,7 @@ class ItemDetail(DetailView):
   model = Item
   template_name = 'item/detail.html'
 
-class ItemCreate(CreateView):
+class ItemCreate(LoginRequiredMixin, CreateView):
   model = Item
   template_name = 'item/create.html'
   fields = ('title', 'body', 'image')
@@ -22,12 +23,12 @@ class ItemCreate(CreateView):
     form.instance.author = self.request.user
     return super().form_valid(form)
 
-class ItemDelete(DeleteView):
+class ItemDelete(LoginRequiredMixin, DeleteView):
   model = Item
   template_name = 'item/delete.html'
   success_url = reverse_lazy('item.list')
 
-class ItemUpdate(UpdateView):
+class ItemUpdate(LoginRequiredMixin, UpdateView):
   model = Item
   template_name = 'item/update.html'
   fields = ('title', 'body', 'image')
