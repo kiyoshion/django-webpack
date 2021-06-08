@@ -6,5 +6,5 @@ from .views import UserDetail, UserUpdate
 urlpatterns = [
     path('<int:pk>/', UserDetail.as_view(), name='user.detail'),
     path('update/<int:pk>/', UserUpdate.as_view(), name='user.update'),
-    path('avatarupload/<int:pk>/', views.AvatarUpload, name='user.update'),
+    path('avatarupload/<int:pk>/', views.AvatarUpload),
 ]

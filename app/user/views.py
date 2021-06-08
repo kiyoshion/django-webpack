@@ -14,7 +14,7 @@ class UserDetail(DetailView):
 class UserUpdate(LoginRequiredMixin, UpdateView):
   model = CustomUser
   template_name = 'user/update.html'
-  fields = ('displayname', 'avatar', 'profile')
+  fields = ('displayname', 'profile')
   success_url = reverse_lazy('home')
 
   def get_queryset(self):

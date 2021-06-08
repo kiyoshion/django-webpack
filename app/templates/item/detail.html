@@ -15,9 +15,11 @@
   </div>
 {% endif %}
 <p>{{ object.body }}</p>
+{% if user.id == object.author.id %}
 <div>
   <a href="{% url 'item.update' object.pk %}">Edit</a>
   <a href="{% url 'item.delete' object.pk %}">Delete</a>
 </div>
+{% endif %}
 <a href="{% url 'item.list' %}">Back</a>
 {% endblock %}

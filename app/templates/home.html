@@ -4,7 +4,10 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-<h1>こんにちは, {% if user.displayname != '' %}{{ user.displayname }}{% endif %}@{{ user.get_username }}さん</h1>
+<h1>こんにちは, {% if user.displayname %}{{ user.displayname }}{% endif %}@{{ user.get_username }}さん</h1>
+{% if user.profile %}
+<p>{{ user.profile }}</p>
+{% endif %}
 <form id="avatar-form" method="POST" enctype="multipart/form-data">
   <input id="input" type="file" name="avatar" style="display: none">
 </form>
