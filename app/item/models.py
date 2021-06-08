@@ -7,6 +7,12 @@ import uuid
 def upload_directory_path(instance, filename):
   return 'item/{}/{}.{}'.format(instance.id, str(uuid.uuid4()), filename.split('.')[-1])
 
+class Tag(models.Model):
+  name = models.CharField(max_length=50)
+
+  def __str__(self):
+    return '{}({})'.format(self.name, self.id)
+
 class Item(models.Model):
   title = models.CharField(max_length=50)
   body = models.TextField()
@@ -24,6 +30,11 @@ class Item(models.Model):
     options={'quality': 80})
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
+
+  tags = models.ManyToManyField(Tag)
+
+  def __str__(self):
+    return '{}({})'.format(self.title, self.author)
 
   def save(self, *args, **kwargs):
     if self.id is None:
