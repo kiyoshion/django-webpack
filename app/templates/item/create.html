@@ -32,5 +32,10 @@
     }
     render.readAsDataURL(file)
   })
+
+  const tags = document.querySelector('#id_tags'),
+        tagify = new Tagify(tags, {
+          originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
+        });
 </script>
 {% endblock %}
