@@ -47,10 +47,37 @@ class ItemDelete(LoginRequiredMixin, DeleteView):
 
 class ItemUpdate(LoginRequiredMixin, UpdateView):
   model = Item
+  form_class = CreateItemForm
   template_name = 'item/update.html'
-  fields = ('title', 'body', 'image')
   success_url = reverse_lazy('item.list')
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    tags = self.object.tags.all()
+    arr = []
+    for tag in tags:
+      arr.append(tag.name)
+    context['tag_arr'] = arr
+    return context
 
   def get_queryset(self):
     queryset = super().get_queryset()
     return queryset.filter(author=self.request.user)
+
+  def form_valid(self, form):
+    success_url = 'item.list'
+    item = form.save(commit=False)
+    # Remove current tags
+    current_tags = item.tags.all()
+    for current_tag in current_tags:
+      item.tags.remove(current_tag)
+    # Add or Create request tags
+    tags = self.request.POST['tags'].split(',')
+    for tag_name in tags:
+      tag_name = tag_name.strip()
+      exist = Tag.objects.filter(name=tag_name).first()
+      if exist:
+        item.tags.add(exist)
+      else:
+        item.tags.create(name=tag_name)
+    return redirect(success_url)

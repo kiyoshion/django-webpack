@@ -37,5 +37,15 @@
     }
     render.readAsDataURL(file)
   })
+
+  const tags = document.querySelector('#id_tags'),
+        tagify = new Tagify(tags, {
+          originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
+        }),
+        tagArr = '{{ tag_arr }}'.replace(/\[|&#x27;|\]/g, '')
+  tagify.removeAllTags()
+  tagify.addTags(tagArr)
+
+        // oriTag.map(tag => tag.replace(/<Tag|>/, ''))
 </script>
 {% endblock %}
