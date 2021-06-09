@@ -8,12 +8,16 @@
 <h1>{{ object.title }}</h1>
 <p>by {{ object.author }}</p>
 <span>{{ object.created_at }} {{ object.updated_at }}</span>
-{% if object.image_thumbnail %}
+{% if object.tags.all %}
   <div>
-    <h2>Thumbnail</h2>
-    <img src="{{ object.image_thumbnail.url }}" alt="{{ object.title }}">
+  {% for tag in object.tags.all %}
+    <span>{{ tag.name }}</span>
+  {% endfor %}
   </div>
 {% endif %}
+<div>
+  <img src="{{ object.getThumbnailImage }}" alt="{{ object.title }}" style="width:600px;">
+</div>
 <p>{{ object.body }}</p>
 {% if user.id == object.author.id %}
 <div>

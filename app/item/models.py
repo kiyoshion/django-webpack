@@ -52,16 +52,16 @@ class Item(models.Model):
     else:
       return self.image_thumbnail.url
 
-  # def save(self, *args, **kwargs):
-  #   if self.id is None:
-  #     uploaded_file = self.image
+  def save(self, *args, **kwargs):
+    if self.id is None:
+      uploaded_file = self.image
 
-  #     self.image = None
-  #     super().save(*args, **kwargs)
+      self.image = None
+      super().save(*args, **kwargs)
 
-  #     self.image = uploaded_file
-  #     if "force_insert" in kwargs:
-  #       kwargs.pop("force_insert")
+      self.image = uploaded_file
+      if "force_insert" in kwargs:
+        kwargs.pop("force_insert")
 
-  #   super().save(*args, **kwargs)
+    super().save(*args, **kwargs)
 

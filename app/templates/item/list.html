@@ -10,6 +10,13 @@
 <div>
 {% for item in object_list %}
   <div>
+    {% if item.tags.all %}
+      {% for tag in item.tags.all %}
+        <span>・{{ tag.name }}</span>
+      {% endfor %}
+    {% else %}
+      <span>No tag</span>
+    {% endif %}
     <img src="{{ item.getSmallImage }}" alt="" style="width:150px">
     <h2>{{ item.title }}</h2>
     <p>{{ item.body }}</p>

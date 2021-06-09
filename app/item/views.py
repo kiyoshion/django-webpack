@@ -34,11 +34,12 @@ class ItemCreate(LoginRequiredMixin, CreateView):
     if tags:
       for tag_name in tags:
         tag_name = tag_name.strip()
-        exist = Tag.objects.filter(name=tag_name).first()
-        if exist:
-          item.tags.add(exist)
-        else:
-          item.tags.create(name=tag_name)
+        if tag_name != '':
+          exist = Tag.objects.filter(name=tag_name).first()
+          if exist:
+            item.tags.add(exist)
+          else:
+            item.tags.create(name=tag_name)
     return redirect(success_url)
 
 class ItemDelete(LoginRequiredMixin, DeleteView):
@@ -72,17 +73,24 @@ class ItemUpdate(LoginRequiredMixin, UpdateView):
   def form_valid(self, form):
     success_url = 'item.list'
     item = form.save(commit=False)
+    item.save()
+
     # Remove current tags
     current_tags = item.tags.all()
     for current_tag in current_tags:
       item.tags.remove(current_tag)
+      if current_tag.item_set.count() == 0:
+        current_tag.delete()
+        
     # Add or Create request tags
     tags = self.request.POST['tags'].split(',')
-    for tag_name in tags:
-      tag_name = tag_name.strip()
-      exist = Tag.objects.filter(name=tag_name).first()
-      if exist:
-        item.tags.add(exist)
-      else:
-        item.tags.create(name=tag_name)
+    if tags:
+      for tag_name in tags:
+        tag_name = tag_name.strip()
+        if tag_name != '':
+          exist = Tag.objects.filter(name=tag_name).first()
+          if exist:
+            item.tags.add(exist)
+          else:
+            item.tags.create(name=tag_name)
     return redirect(success_url)
