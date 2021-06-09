@@ -1,4 +1,4 @@
 .env
 .env.db
 .env.dev
-docker-compose.prod.ssl.yml
+docker-compose.ssl.yml
