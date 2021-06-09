@@ -1,15 +1,20 @@
 {% extends '../base.html' %}
 
+{% load static %}
+
 {% block head_title %}Item List | {{ block.super }}{% endblock %}
 
 {% block content %}
 <h1>アイテム一覧</h1>
 <a href="{% url 'item.create' %}">新規作成</a>
-<ul>
+<div>
 {% for item in object_list %}
-<li>
-  <a href="{% url 'item.detail' item.id %}">{{ item.created_at }} - {{ item.title }}</a>
-</li>
+  <div>
+    <img src="{{ item.getSmallImage }}" alt="" style="width:150px">
+    <h2>{{ item.title }}</h2>
+    <p>{{ item.body }}</p>
+    <a href="{% url 'item.detail' item.id %}">more</a>
+  </div>
 {% endfor %}
-</ul>
+</div>
 {% endblock %}

@@ -2,7 +2,11 @@ from django.db import models
 from user.models import CustomUser
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill
+from django.conf import settings
+from django import template
 import uuid
+
+register = template.Library()
 
 def upload_directory_path(instance, filename):
   return 'item/{}/{}.{}'.format(instance.id, str(uuid.uuid4()), filename.split('.')[-1])
@@ -36,16 +40,28 @@ class Item(models.Model):
   def __str__(self):
     return '{}({})'.format(self.title, self.author)
 
-  def save(self, *args, **kwargs):
-    if self.id is None:
-      uploaded_file = self.image
+  def getSmallImage(self):
+    if not self.image:
+      return settings.MEDIA_URL + '/public/noimage.svg'
+    else:
+      return self.image_small.url
 
-      self.image = None
-      super().save(*args, **kwargs)
+  def getThumbnailImage(self):
+    if not self.image:
+      return settings.MEDIA_URL + '/public/noimage.svg'
+    else:
+      return self.image_thumbnail.url
 
-      self.image = uploaded_file
-      if "force_insert" in kwargs:
-        kwargs.pop("force_insert")
+  # def save(self, *args, **kwargs):
+  #   if self.id is None:
+  #     uploaded_file = self.image
 
-    super().save(*args, **kwargs)
+  #     self.image = None
+  #     super().save(*args, **kwargs)
+
+  #     self.image = uploaded_file
+  #     if "force_insert" in kwargs:
+  #       kwargs.pop("force_insert")
+
+  #   super().save(*args, **kwargs)
 

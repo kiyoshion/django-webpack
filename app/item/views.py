@@ -10,6 +10,10 @@ class ItemList(ListView):
   model = Item
   template_name = 'item/list.html'
 
+# class ItemTagList(ListView):
+#   model = Item
+#   template_name = 'item/tag_list.html'
+
 class ItemDetail(DetailView):
   model = Item
   template_name = 'item/detail.html'
@@ -27,13 +31,14 @@ class ItemCreate(LoginRequiredMixin, CreateView):
     item.save()
     tags = self.request.POST['tags'].split(',')
 
-    for tag_name in tags:
-      tag_name = tag_name.strip()
-      exist = Tag.objects.filter(name=tag_name).first()
-      if exist:
-        item.tags.add(exist)
-      else:
-        item.tags.create(name=tag_name)
+    if tags:
+      for tag_name in tags:
+        tag_name = tag_name.strip()
+        exist = Tag.objects.filter(name=tag_name).first()
+        if exist:
+          item.tags.add(exist)
+        else:
+          item.tags.create(name=tag_name)
     return redirect(success_url)
 
 class ItemDelete(LoginRequiredMixin, DeleteView):
