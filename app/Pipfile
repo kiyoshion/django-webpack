@@ -12,6 +12,7 @@ pillow = "*"
 django-allauth = "*"
 django-imagekit = "*"
 django-cleanup = "*"
+django-webpack-loader = "*"
 
 [requires]
 python_version = "3.8"
