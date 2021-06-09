@@ -10,8 +10,10 @@
 
 </head>
 <body>
+  {% include 'layouts/_header.html' %}
   {% block content %}
   {% endblock %}
+  {% include 'layouts/_footer.html' %}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.polyfills.min.js"></script>
   {% block extrajs %}{% endblock %}

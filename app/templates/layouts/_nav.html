@@ -1,0 +1,12 @@
+<nav>
+  <ul style="list-style:none;display:flex;">
+    <li><a href="{% url 'item.list' %}">アイテム一覧</a></li>
+    {% if user.is_authenticated %}
+    <li><a href="{% url 'home' %}">マイページ</a></li>
+    <li><a href="{% url 'account_logout' %}">ログアウト</a></li>
+    {% else %}
+    <li><a href="{% url 'account_login' %}">ログイン</a></li>
+    <li><a href="{% url 'account_signup' %}">ユーザー登録</a></li>
+    {% endif %}
+  </ul>
+</nav>
