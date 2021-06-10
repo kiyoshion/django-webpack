@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill
 import uuid
@@ -15,7 +16,12 @@ class CustomUser(AbstractUser):
   profile = models.TextField(default='', blank=True, null=True)
   avatar = ProcessedImageField(blank=True,
     null=True,
-    default='public/avatar.svg',
     upload_to=user_directory_path,
     processors=[ResizeToFill(150, 150)],
     options={'quality': 80})
+
+  def getAvatar(self):
+    if not self.avatar:
+      return settings.STATIC_URL + 'img/avatar.svg'
+    else:
+      return self.avatar.url

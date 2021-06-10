@@ -11,7 +11,7 @@
 <form id="avatar-form" method="POST" enctype="multipart/form-data">
   <input id="input" type="file" name="avatar" style="display: none">
 </form>
-<img id="avatar" src="{{ user.avatar.url }}" alt="{{ user.username }}" width="70" height="70">
+<img id="avatar" src="{{ user.getAvatar }}" alt="{{ user.username }}" width="70" height="70">
 <div>
   <a href="{% url 'account_logout' %}">Logout</a>
   <a href="{% url 'user.update' user.id %}">プロフィール編集</a>
