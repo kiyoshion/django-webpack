@@ -1,3 +1,5 @@
+{% load render_bundle from webpack_loader %}
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block head_title %}Django CRUD{% endblock %}</title>
 
+  {% render_bundle 'main' 'css' %}
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.min.css" rel="stylesheet" type="text/css" />
 
 </head>
@@ -16,6 +19,8 @@
   {% include 'layouts/_footer.html' %}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.polyfills.min.js"></script>
+
+  {% render_bundle 'main' 'js' %}
   {% block extrajs %}{% endblock %}
 </body>
 </html>
