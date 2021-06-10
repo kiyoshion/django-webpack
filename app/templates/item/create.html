@@ -19,11 +19,11 @@
 
 {% block extrajs %}
 <script>
-  const img = document.querySelector('input[name="image"]')
-  const imgPreview = document.querySelector('#img-preview')
+  const img = document.querySelector('input[name="image"]'),
+        imgPreview = document.querySelector('#img-preview')
+
   img.addEventListener('change', (event) => {
     const file = event.target.files[0]
-
     const render = new FileReader()
     render.onload = () => {
       const img = new Image()
@@ -36,6 +36,6 @@
   const tags = document.querySelector('#id_tags'),
         tagify = new Tagify(tags, {
           originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
-        });
+        })
 </script>
 {% endblock %}

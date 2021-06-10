@@ -9,7 +9,7 @@
   <title>{% block head_title %}Django CRUD{% endblock %}</title>
 
   {% render_bundle 'main' 'css' %}
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.min.css" rel="stylesheet" type="text/css" />
+  {% block extracss %}{% endblock %}
 
 </head>
 <body>
@@ -17,10 +17,10 @@
   {% block content %}
   {% endblock %}
   {% include 'layouts/_footer.html' %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.polyfills.min.js"></script>
 
   {% render_bundle 'main' 'js' %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.polyfills.min.js"></script>
   {% block extrajs %}{% endblock %}
 </body>
 </html>
