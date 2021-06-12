@@ -65,3 +65,8 @@ class Item(models.Model):
 
     super().save(*args, **kwargs)
 
+class Comment(models.Model):
+  body = models.TextField()
+  author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+  item = models.ForeignKey(Item, on_delete=models.CASCADE)
+  created_at = models.DateTimeField(auto_now_add=True)

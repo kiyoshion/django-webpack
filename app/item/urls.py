@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from . import views
 from .views import ItemList, ItemDetail, ItemCreate, ItemDelete, ItemUpdate
 
 urlpatterns = [
@@ -8,4 +9,5 @@ urlpatterns = [
     path('create/', ItemCreate.as_view(), name='item.create'),
     path('delete/<int:pk>/', ItemDelete.as_view(), name='item.delete'),
     path('update/<int:pk>/', ItemUpdate.as_view(), name='item.update'),
+    path('create_comment/<int:pk>/', views.create_comment, name='item.create_comment'),
 ]
