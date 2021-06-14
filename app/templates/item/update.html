@@ -3,22 +3,50 @@
 {% block head_title %}{{ object.title }} | {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1>アイテムを編集</h1>
-<form action="" method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form }}
-  <div id="img-preview">
-    {% if object.image %}
-    <img id="img-tag" src="{{ object.image_thumbnail.url }}" style="width:200px;" alt="">
-    {% else %}
-    <img id="img-tag" style="width:200px;">
-    {% endif %}
+<div class="sm:w-2/3 max-w-5xl mx-auto">
+  <div class="mx-4 sm:mx-0 my-4 sm:my-8">
+    <div>
+    <h1 class="text-2xl font-bold">アイテムを投稿する</h1>
+    <div class="bg-white p-4 sm:p-8 my-8 shadow-sm w-full">
+      <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+          <label class="block mb-2 text-sm" for="id_title">タイトル</label>
+          <input class="input" type="text" name="title" required="" id="id_title" value="{{ object.title }}">
+        </div>
+        <div>
+          <label class="block mb-2 text-sm" for="id_body">本文</label>
+          <textarea class="input" name="body" cols="40" rows="5" required="" id="id_body">{{ object.body }}</textarea>
+        </div>
+        <div class="flex mb-4">
+          <div>
+            <label class="block mb-2 text-sm" for="id_image">画像</label>
+            <input class="" type="file" name="image" accept="image/*" id="id_image">
+          </div>
+          <div>
+            <div id="img-preview">
+              {% if object.image %}
+              <img id="img-tag" class="w-full object-cover" src="{{ object.image_thumbnail.url }}" alt="">
+              {% else %}
+              <img id="img-tag" class="w-full object-cover">
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block mb-2 text-sm" for="id_tags">タグ</label>
+          <input type="text" name="tags" id="id_tags">
+        </div>
+
+        <div class="text-center mt-8">
+          <button class="btn btn-black btn-wide" type="submit">更新する</button>
+        </div>
+      </form>
+      </div>
+      <a class="btn btn-gray" href="{% url 'item.detail' item.id %}">キャンセル</a>
+    </div>
   </div>
-  <div>
-    <button type="submit">send</button>
-  </div>
-</form>
-<a href="{% url 'item.list' %}">Back</a>
+</div>
 {% endblock %}
 
 {% block extrajs %}

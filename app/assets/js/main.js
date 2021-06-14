@@ -1,4 +1,5 @@
 import '../css/main.css'
+import "@yaireo/tagify/dist/tagify.css"
 import { config, dom, library } from '@fortawesome/fontawesome-svg-core'
 import { faEnvelope, faLock, faHeart, faCamera, faCalendarAlt, faPencilAlt, faTrashAlt, faInfoCircle, faComment, faUser } from '@fortawesome/free-solid-svg-icons'
 

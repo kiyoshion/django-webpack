@@ -3,18 +3,44 @@
 {% block head_title %}Item Create | {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1>アイテムの新規作成</h1>
-<form action="" method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form }}
-  <div>
-    <img id="img-preview" style="width: 200px;object-fit: cover;">
+<div class="sm:w-2/3 max-w-5xl mx-auto">
+  <div class="mx-4 sm:mx-0 my-4 sm:my-8">
+    <div>
+    <h1 class="text-2xl font-bold">アイテムを投稿する</h1>
+    <div class="bg-white p-4 sm:p-8 my-8 shadow-sm w-full">
+      <form class="w-full" action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+          <label class="block mb-2 text-sm" for="id_title">タイトル</label>
+          <input class="input" type="text" name="title" required="" id="id_title">
+        </div>
+        <div>
+          <label class="block mb-2 text-sm" for="id_body">本文</label>
+          <textarea class="input" name="body" cols="40" rows="5" required="" id="id_body"></textarea>
+        </div>
+        <div class="flex mb-4">
+          <div>
+            <label class="block mb-2 text-sm" for="id_image">画像</label>
+            <input class="" type="file" name="image" accept="image/*" id="id_image">
+          </div>
+          <div>
+            <img id="img-preview" class="w-full object-cover">
+          </div>
+        </div>
+        <div>
+          <label class="block mb-2 text-sm" for="id_tags">タグ</label>
+          <input type="text" name="tags" id="id_tags">
+        </div>
+        <div class="text-center mt-8">
+          <button class="btn btn-black btn-wide" type="submit">投稿する</button>
+        </div>
+      </form>
+    </div>
+
+    <a class="btn btn-gray" href="{% url 'item.list' %}">キャンセル</a>
+    </div>
   </div>
-  <div>
-    <button type="submit">send</button>
-  </div>
-</form>
-<a href="{% url 'item.list' %}">Back</a>
+</div>
 {% endblock %}
 
 {% block extrajs %}

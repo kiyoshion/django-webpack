@@ -3,13 +3,26 @@
 {% block head_title %}{{ object.username }} | {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1>ユーザ情報を編集</h1>
-<form action="" method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form }}
-  <div>
-    <button type="submit">send</button>
+<div class="sm:w-2/3 max-w-5xl mx-auto">
+  <div class="mx-4 sm:mx-0 my-4 sm:my-8">
+    <h1 class="text-2xl font-bold">プロフィールを編集する</h1>
+    <div class="bg-white p-4 sm:p-8 my-8 shadow-sm w-full">
+      <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+          <label class="block mb-2 text-sm" for="id_title">表示名</label>
+          <input class="input" type="text" name="displayname" maxlength="50" id="id_displayname">
+        </div>
+        <div>
+          <label class="block mb-2 text-sm" for="id_title">プロフィール</label>
+          <textarea class="input" name="profile" cols="40" rows="5" id="id_profile">いつもほげほげしています。</textarea>
+        </div>
+        <div class="text-center mt-8">
+          <button class="btn btn-black btn-wide" type="submit">更新する</button>
+        </div>
+      </form>
+    </div>
+    <a class="btn btn-gray" href="{% url 'home' %}">キャンセル</a>
   </div>
-</form>
-<a href="{% url 'home' %}">Back</a>
+</div>
 {% endblock %}

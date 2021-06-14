@@ -16,7 +16,7 @@
     @apply text-white bg-gray-800 hover:bg-gray-700
   }
   .btn-gray {
-    @apply text-white bg-gray-500 hover:bg-gray-400
+    @apply text-gray-700 bg-gray-200 hover:bg-gray-100
   }
   .btn-ghost {
     @apply text-white bg-opacity-40 border-white hover:opacity-80

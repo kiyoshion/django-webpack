@@ -5,6 +5,7 @@ from django.views.generic import ListView, DetailView, CreateView, DeleteView, U
 from django.urls import reverse_lazy
 from django.http import Http404
 from django.http.response import JsonResponse
+from django.conf import settings
 
 from .models import Item, Tag, Comment, Like
 
@@ -14,39 +15,30 @@ class ItemList(ListView):
   template_name = 'item/list.html'
 
   def get_queryset(self):
+
     return Item.objects.order_by('-created_at')
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
     try:
       hero = Item.objects.latest("created_at")
-      context['hero'] = hero.getThumbnailImage()
+      if hero.image:
+        context['hero'] = hero.getThumbnailImage()
+      else:
+        context['hero'] = settings.STATIC_URL + 'img/bg-0.jpg'
     except Item.DoesNotExist:
       print('404')
+
     return context
-
-
-# class ItemTagList(ListView):
-#   model = Item
-#   template_name = 'item/tag_list.html'
 
 class ItemDetail(DetailView):
   model = Item
   template_name = 'item/detail.html'
 
-  # def get_context_data(self, **kwargs):
-  #   context = super().get_context_data(**kwargs)
-  #   try:
-  #     item = Item.object.get(pk=self.pk)
-  #     comments = item.comments_set.all()
-  #     context['comments_cnt'] = comments.count()
-  #     context['comments_usrs'] =
-
 class ItemCreate(LoginRequiredMixin, CreateView):
   model = Item
   form_class = CreateItemForm
   template_name = 'item/create.html'
-  success_url = reverse_lazy('item.list')
 
   def form_valid(self, form):
     success_url = 'item.list'
@@ -64,7 +56,8 @@ class ItemCreate(LoginRequiredMixin, CreateView):
             item.tags.add(exist)
           else:
             item.tags.create(name=tag_name)
-    return redirect(success_url)
+
+    return redirect('item.detail', pk=item.id)
 
 class ItemDelete(LoginRequiredMixin, DeleteView):
   model = Item
@@ -73,6 +66,7 @@ class ItemDelete(LoginRequiredMixin, DeleteView):
 
   def get_queryset(self):
     queryset = super().get_queryset()
+
     return queryset.filter(author=self.request.user)
 
 class ItemUpdate(LoginRequiredMixin, UpdateView):
@@ -88,10 +82,12 @@ class ItemUpdate(LoginRequiredMixin, UpdateView):
     for tag in tags:
       arr.append(tag.name)
     context['tag_arr'] = arr
+
     return context
 
   def get_queryset(self):
     queryset = super().get_queryset()
+
     return queryset.filter(author=self.request.user)
 
   def form_valid(self, form):
@@ -117,7 +113,7 @@ class ItemUpdate(LoginRequiredMixin, UpdateView):
             item.tags.add(exist)
           else:
             item.tags.create(name=tag_name)
-    # return redirect(success_url)
+
     return redirect('item.detail', pk=item.id)
 
 def create_comment(request, pk):
@@ -126,7 +122,20 @@ def create_comment(request, pk):
     item = Item.objects.get(pk=pk)
     comment = Comment(body=request.POST.get('comment'), author=request.user, item=item)
     comment.save()
+
     return redirect('item.detail', pk=pk)
+
+def delete_item(request, pk):
+
+  if request.method == 'POST':
+    item = Item.objects.get(pk=pk)
+    if item.author == request.user:
+      item.delete()
+      data = {"msg": 'ok'}
+    else:
+      data = {"msg": 'ng'}
+
+  return JsonResponse(data)
 
 def like(request, pk):
 
@@ -142,4 +151,5 @@ def like(request, pk):
       item.likes.add(l)
     cnt = item.likes.count()
     data = {"cnt": cnt}
+
     return JsonResponse(data)

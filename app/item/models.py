@@ -47,13 +47,13 @@ class Item(models.Model):
 
   def getSmallImage(self):
     if not self.image:
-      return settings.STATIC_URL + 'img/noimage.svg'
+      return settings.STATIC_URL + 'img/noimage.png'
     else:
       return self.image_small.url
 
   def getThumbnailImage(self):
     if not self.image:
-      return settings.STATIC_URL + 'img/noimage.svg'
+      return settings.STATIC_URL + 'img/noimage.png'
     else:
       return self.image_thumbnail.url
 

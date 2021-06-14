@@ -1,12 +1,12 @@
 {% load myfilter %}
 
-<div class="w-auto h-auto mx-auto relative shadow-sm bg-white rounded-lg">
+<div class="w-full h-auto mx-auto relative shadow-sm bg-white rounded-lg">
   <a class="absolute w-full h-full z-10 top-0 left-0" href="{% url 'item.detail' item.id %}"></a>
   <div class="flex flex-col">
 
-    <div class="order-2 sm:w-full">
-      <figure class="h-auto"></figure>
-        <img class="object-cover h-auto " src="{{ item.getThumbnailImage }}" alt="{{ item.title }}">
+    <div class="order-2 w-full">
+      <figure class="aspect-w-16 aspect-h-9">
+        <img class="object-cover" src="{{ item.getThumbnailImage }}" alt="{{ item.title }}">
       </figure>
     </div>
 

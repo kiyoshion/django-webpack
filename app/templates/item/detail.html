@@ -14,7 +14,7 @@
         <p class="mb-1">{{ object.author.username }}</p>
         <div class="flex">
           <i class="fas fa-calendar-alt text-gray-400 text-xs mr-1"></i>
-          <span class="text-gray-400 text-xs">{{ object.created_at|date:"Y/m/j" }}に公開</span>
+          <span class="text-gray-400 text-xs">{{ object.created_at|date:"Y/m/j" }}</span>
         </div>
       </div>
     </div>
@@ -28,7 +28,7 @@
   </div>
   <div class="shadow-sm">
     <div>
-      <img src="{{ object.getThumbnailImage }}" alt="{{ object.title }}" style="width:600px;">
+      <img src="{{ object.getThumbnailImage }}" alt="{{ object.title }}">
     </div>
     <div class="p-8 mb-4 bg-white">
       <p>{{ object.body }}</p>
@@ -37,13 +37,13 @@
   {% if user.id == object.author.id %}
   <div class="flex justify-end">
     <div class="flex text-blue-500">
-      <div class="flex mr-4">
+      <div class="flex mr-4 select-none">
         <i class="fas fa-pencil-alt mr-1"></i>
         <a class="" href="{% url 'item.update' object.pk %}">編集</a>
       </div>
-      <div class="flex">
+      <div class="flex select-none">
         <i class="fas fa-trash-alt mr-1"></i>
-        <a class="" href="{% url 'item.delete' object.pk %}">削除</a>
+        <button id="btn-del" class="" href="">削除</button>
       </div>
     </div>
   </div>
@@ -83,4 +83,30 @@
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  const btnDel = document.querySelector('#btn-del')
+  const itemId = '{{ object.id }}'
+  btnDel.addEventListener('click', e => {
+    let result = window.confirm('アイテムを削除しますか？')
+    let data = new FormData()
+    data.append('pk', itemId)
+    data.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+    if (result) {
+      axios.post(`/item/del/${itemId}/`, data)
+        .then(res => {
+          if (res.data.msg === 'ok') {
+            location.href = '/item/'
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    } else {
+      return false
+    }
+  })
+</script>
 {% endblock %}
