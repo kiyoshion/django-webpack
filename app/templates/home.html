@@ -3,7 +3,8 @@
 {% block extracss %}
 <style>
   .tab-list .js-current {
-    color: lightsteelblue;
+    color: dodgerblue;
+    border-bottom: 2px solid dodgerblue;
   }
 </style>
 {% endblock %}
@@ -37,12 +38,12 @@
     </div>
   </div>
 </div>
-<div class="bg-white w-full py-4">
+<div class="bg-white w-full">
   <div class="max-w-5xl container lg:mx-auto">
     <div class="tab-list flex justify-center sm:justify-start">
-      <div data-id="tab-1" class="js-current p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">投稿したアイテム</div>
-      <div data-id="tab-2" class="p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">いいねしたアイテム</div>
-      <div data-id="tab-3" class="p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">コメント</div>
+      <div data-id="tab-1" class="js-current text-center w-32 p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">アイテム</div>
+      <div data-id="tab-2" class="text-center w-32 p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">いいね</div>
+      <div data-id="tab-3" class="text-center w-32 p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">コメント</div>
     </div>
   </div>
 </div>
