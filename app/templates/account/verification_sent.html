@@ -5,8 +5,13 @@
 {% block head_title %}{% trans "Verify Your E-mail Address" %} | {{ block.super }}{% endblock %}
 
 {% block content %}
-    <h1>{% trans "Verify Your E-mail Address" %}</h1>
-
-    <p>{% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
-
+<div class="relative backdrop-filter backdrop-blur-sm z-30 mx-4 sm:max-w-md sm:mx-auto px-8 py-12 bg-white bg-opacity-25 shadow-sm rounded-lg text-white">
+  <div class="flex mb-8 items-center justify-center rounded-t-md">
+    <span class="mr-4 text-xl sm:text-2xl">
+      <i class="fas fa-info-circle"></i>
+    </span>
+    <h1 class="text-sm sm:text-lg font-bold text-center">{% trans "Verify Your E-mail Address" %}</h1>
+  </div>
+  <p class="text-sm leading-6 mx-auto">{% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
+</div>
 {% endblock %}

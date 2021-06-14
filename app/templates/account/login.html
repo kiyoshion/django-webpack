@@ -6,41 +6,62 @@
 {% block head_title %}{% trans "Sign In" %} | {{ block.super }}{% endblock %}
 
 {% block content %}
+<div class="relative backdrop-filter backdrop-blur-sm z-30 mx-4 sm:max-w-md sm:mx-auto px-8 py-12 bg-white bg-opacity-25 shadow-sm rounded-lg text-white">
+  <div class="flex  flex-col mb-8 items-center justify-center rounded-t-md">
+    <h1 class="mt-6 text-center text-3xl font-extrabold">{% trans "Sign In" %}</h1>
 
-<h1>{% trans "Sign In" %}</h1>
+    {% get_providers as socialaccount_providers %}
 
-{% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+    <p class="my-2">{% blocktrans with site.name as site_name %}Please sign in with one
+    of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
+    for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 
-{% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
-of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+    <div class="socialaccount_ballot">
 
-<div class="socialaccount_ballot">
+      <ul class="socialaccount_providers">
+        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+      </ul>
 
-  <ul class="socialaccount_providers">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
+      <div class="login-or">{% trans 'or' %}</div>
 
-  <div class="login-or">{% trans 'or' %}</div>
+    </div>
 
+    {% include "socialaccount/snippets/login_extra.html" %}
+
+    {% else %}
+    <p class="my-4">アカウントをお持ちでない場合は、<a class="underline" href="{{ signup_url }}">ユーザー登録</a> からアカウントを登録してください。</p>
+    {% endif %}
+
+    <form class="w-full" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      <div>
+        <div class="relative">
+          <input class="input input-ghost" type="email" name="login" aria-label="メールアドレス" placeholder="メールアドレス" />
+          <div class="input-icon-wrapper">
+            <i class="fas fa-envelope "></i>
+          </div>
+        </div>
+        <div class="relative">
+          <input class="input input-ghost" type="password" name="password" aria-label="パスワード" placeholder="パスワード" />
+          <div class="input-icon-wrapper">
+            <i class="fas fa-lock"></i>
+          </div>
+        </div>
+      </div>
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <div class="flex justify-center mb-4">
+        <button type="submit" class="btn btn-black btn-full">
+          ログイン
+        </button>
+      </div>
+      <div class="my-4 text-sm text-center">
+        <a class="underline" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+      </div>
+      </div>
+    </form>
+  </div>
 </div>
-
-{% include "socialaccount/snippets/login_extra.html" %}
-
-{% else %}
-<p>{% blocktrans %}If you have not created an account yet, then please
-<a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
-{% endif %}
-
-<form class="login" method="POST" action="{% url 'account_login' %}">
-  {% csrf_token %}
-  {{ form.as_p }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-  <button class="primaryAction" type="submit">{% trans "Sign In" %}</button>
-</form>
-
 {% endblock %}

@@ -5,7 +5,11 @@
 {% block head_title %}{% trans "Verify Your E-mail Address" %} | {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Verify Your E-mail Address" %}</h1>
+
+<div class="columns is-desktop">
+  <div class="column is-half is-offset-one-quarter">
+    <div class="box p-6 m-4">
+<h1 class="title is-4 has-text-centered">{% trans "Verify Your E-mail Address" %}</h1>
 
 {% url 'account_email' as email_url %}
 
@@ -19,5 +23,7 @@ contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
 
 <p>{% blocktrans %}<strong>Note:</strong> you can still <a href="{{ email_url }}">change your e-mail address</a>.{% endblocktrans %}</p>
 
-
+</div>
+</div>
+</div>
 {% endblock %}
