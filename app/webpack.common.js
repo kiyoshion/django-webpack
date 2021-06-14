@@ -17,23 +17,23 @@ module.exports = {
   ],
   module: {
     rules: [
-      {
-        test: /\.(css|sass|scss)/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: false,
-            },
-          },
-          {
-            loader: 'sass-loader',
-          },
-        ],
-      },
+      // {
+      //   test: /\.(css|sass|scss)/,
+      //   use: [
+      //     {
+      //       loader: MiniCssExtractPlugin.loader,
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         sourceMap: false,
+      //       },
+      //     },
+      //     {
+      //       loader: 'sass-loader',
+      //     },
+      //   ],
+      // },
       {
         test: /\.(png|jpg|jpeg)/,
         use: [
@@ -41,7 +41,7 @@ module.exports = {
             loader: 'file-loader',
             options: {
               esModule: false,
-              name: 'img/[name]-[hash].[ext]',
+              name: 'img/[name].[ext]',
               publicPath: '/',
             },
           },

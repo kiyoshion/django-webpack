@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply whitespace-nowrap inline-flex items-center justify-center px-4 py-3 border border-transparent rounded-sm shadow-sm text-sm
+  }
+  .btn-full {
+    @apply w-full
+  }
+  .btn-wide {
+    @apply px-12
+  }
+  .btn-black {
+    @apply text-white bg-gray-800 hover:bg-gray-700
+  }
+  .btn-gray {
+    @apply text-white bg-gray-500 hover:bg-gray-400
+  }
+  .btn-outline-gray {
+    @apply border-gray-400 text-gray-500 hover:text-gray-900
+  }
+  .input {
+    @apply mb-4 w-full text-sm border border-gray-200 rounded-sm p-3
+  }
+  .input-ghost {
+    @apply bg-opacity-50 text-gray-600 text-opacity-100 placeholder-gray-400  py-3 pl-10
+  }
+  .input-icon-wrapper {
+    @apply absolute top-1/2 transform -mt-2 -translate-y-1/2 left-0 pl-3 flex items-center pointer-events-none text-gray-400 text-lg
+  }
+}
+
+html,
+body {
+  @apply text-gray-700
+}
+
+.bg-blur {
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-blur::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  left: -5px;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  background: inherit;
+  filter: blur(5px);
+  z-index: 20;
+}

@@ -7,6 +7,18 @@ module.exports = merge(common, {
   output: {
     filename: 'js/[name].js',
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          "style-loader",
+          { loader: "css-loader", options: { importLoaders: 1 } },
+          "postcss-loader",
+        ],
+      },
+    ]
+  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: './css/[name].css',
