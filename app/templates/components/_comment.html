@@ -1,0 +1,14 @@
+<div class="p-8 bg-white shadow-sm">
+  <div class="flex items-center">
+    <img class="w-8 h-8 object-cover rounded-full mr-2" src="{{ c.author.getAvatar }}" alt="{{ c.author.username }}">
+    <div>
+      <p class="mb-1">{{ c.author.username }}</p>
+      <div class="flex">
+        <span class="text-gray-400 text-xs">{{ c.created_at|date:"Y/m/d H:i" }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="mt-4">
+    <p>{{ c.body }}</p>
+  </div>
+</div>

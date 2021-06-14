@@ -18,6 +18,9 @@
   .btn-gray {
     @apply text-white bg-gray-500 hover:bg-gray-400
   }
+  .btn-ghost {
+    @apply text-white bg-opacity-40 border-white hover:opacity-80
+  }
   .btn-outline-gray {
     @apply border-gray-400 text-gray-500 hover:text-gray-900
   }

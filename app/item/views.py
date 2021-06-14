@@ -18,13 +18,11 @@ class ItemList(ListView):
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
-    items = Item.objects.all()
     try:
       hero = Item.objects.latest("created_at")
       context['hero'] = hero.getThumbnailImage()
     except Item.DoesNotExist:
       print('404')
-      # hero = get_object_or_404(Item, )
     return context
 
 

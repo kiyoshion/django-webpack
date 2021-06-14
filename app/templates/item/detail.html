@@ -54,7 +54,7 @@
     {% for c in object.comment_set.all %}
     <div class="p-8 bg-white shadow-sm">
       <div class="flex items-center">
-        <img class="w-8 h-8 object-cover rounded-full mr-2" src="{{ c.author.getAvatar }}" alt="{{ object.author.username }}">
+        <img class="w-8 h-8 object-cover rounded-full mr-2" src="{{ c.author.getAvatar }}" alt="{{ c.author.username }}">
         <div>
           <p class="mb-1">{{ c.author.username }}</p>
           <div class="flex">

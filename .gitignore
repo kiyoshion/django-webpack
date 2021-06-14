@@ -2,3 +2,4 @@
 .env.db
 .env.dev
 docker-compose.ssl.yml
+.vscode

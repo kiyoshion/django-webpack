@@ -1,44 +1,79 @@
 {% extends 'base.html' %}
 
+{% block extracss %}
+<style>
+  .tab-list .js-current {
+    color: lightsteelblue;
+  }
+</style>
+{% endblock %}
+
 {% block head_title %}Home | {{ block.super }}{% endblock %}
 
 {% block hero %}
-<section class="hero is-white">
-  <div class="hero-body container">
-    <div class="media">
-      <div class="media-left">
-        <figure class="image is-128x128">
-          <img class="is-rounded" src="{{ user.getAvatar }}">
-        </figure>
-      </div>
-      <div class="media-content">
-        <h2 class="title is-size-4">{{ user.username }}</h2>
+<div class="bg-white bg-blur relative overflow-hidden w-full flex items-center h-80 bg-cover bg-no-repeat blur-sm bg-center z-0" {% if hero %} style="background-image: url('{{ hero }}')"; {% else %} style="background-image: url('/static/img/bg-0.jpg')"; {% endif %}>
+  <div class="relative z-20 max-w-5xl container mx-4 lg:mx-auto flex flex-col sm:flex-row items-center justify-between">
+    <div class="sm:w-1/2">
+      <div class="flex flex-col sm:flex-row text-center sm:text-left items-center sm:items-start">
+        <div class="mr-0 mb-2 sm:mr-4 sm:mb-0 w-16">
+          <form id="avatar-form" method="POST" enctype="multipart/form-data">
+            <input id="input" type="file" name="avatar" style="display: none">
+          </form>
+          <div class="relative">
+            <img id="avatar" class="relative hover:opacity-80 z-10 rounded-full cursor-pointer" src="{{ user.getAvatar }}" alt="{{ user.username }}" width="64" height="64">
+            <span class="absolute -bottom-2 -right-2 z-10 text-xs text-gray-100 bg-gray-800 rounded-full p-2">
+              <i class="fas fa-camera"></i>
+            </span>
+          </div>
+        </div>
+        <div class="text-white">
+          <h2 class="text-2xl mb-2">{{ user.get_username }}</h2>
+          {% if user.profile %}<p>{{ user.profile }}</p>{% endif %}
+        </div>
       </div>
     </div>
+    <div class="mt-4 sm:mt-0">
+      <a class="btn btn-ghost" href="{% url 'user.update' user.id %}">プロフィール編集</a>
+    </div>
   </div>
-</section>
+</div>
+<div class="bg-white w-full py-4">
+  <div class="max-w-5xl container lg:mx-auto">
+    <div class="tab-list flex justify-center sm:justify-start">
+      <div data-id="tab-1" class="js-current p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">投稿したアイテム</div>
+      <div data-id="tab-2" class="p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">いいねしたアイテム</div>
+      <div data-id="tab-3" class="p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">コメント</div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-
-<h1>{% if user.displayname %}{{ user.displayname }}{% endif %}@{{ user.get_username }}さん</h1>
-{% if user.profile %}
-<p>{{ user.profile }}</p>
-{% endif %}
-<form id="avatar-form" method="POST" enctype="multipart/form-data">
-  <input id="input" type="file" name="avatar" style="display: none">
-</form>
-<img id="avatar" src="{{ user.getAvatar }}" alt="{{ user.username }}" width="70" height="70">
-<div>
-  <a href="{% url 'account_logout' %}">Logout</a>
-  <a href="{% url 'user.update' user.id %}">プロフィール編集</a>
+<div class="tab-items container mx-2 sm:mx-4 md:mx-0 my-8 lg:max-w-5xl">
+  <div id="tab-1" class="block">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+    {% for item in items %}
+      {% include './components/_card.html' %}
+    {% endfor %}
+    </div>
+  </div>
+  <div id="tab-2" class="hidden">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+    {% for item in likes %}
+      {% include './components/_card.html' %}
+    {% endfor %}
+    </div>
+  </div>
+  <div id="tab-3" class="hidden">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+    {% for c in comments %}
+      <a href="{% url 'item.detail' c.item.id %}">
+        {% include './components/_comment.html' %}
+      </a>
+    {% endfor %}
+    </div>
+  </div>
 </div>
-{% else %}
-<h1>Not Logged in</h1>
-<a href="{% url 'account_login' %}">Login</a>
-<a href="{% url 'account_signup' %}">Singup</a>
-{% endif %}
 {% endblock %}
 
 {% block extrajs %}
@@ -73,5 +108,29 @@
   function setNewAvatar(url) {
     avatar.src = url
   }
+
+  let currentTab = 'tab1'
+  const tabList = document.querySelectorAll('.tab-list > div'),
+        tabItems = document.querySelectorAll('.tab-items > div')
+
+  tabList.forEach(clickedItem => {
+    clickedItem.addEventListener('click', e => {
+      e.preventDefault()
+
+      tabList.forEach(list => {
+        list.classList.remove('js-current')
+      })
+
+      clickedItem.classList.add('js-current')
+
+      tabItems.forEach(item => {
+        item.classList.remove('block')
+        item.classList.add('hidden')
+      })
+
+      document.getElementById(clickedItem.dataset.id).classList.remove('hidden')
+      document.getElementById(clickedItem.dataset.id).classList.add('block')
+    })
+  })
 </script>
 {% endblock %}
