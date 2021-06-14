@@ -4,24 +4,61 @@
 
 {% block head_title %}Item List | {{ block.super }}{% endblock %}
 
-{% block content %}
-<h1>アイテム一覧</h1>
-<a href="{% url 'item.create' %}">新規作成</a>
-<div>
-{% for item in object_list %}
-  <div>
-    {% if item.tags.all %}
-      {% for tag in item.tags.all %}
-        <span>・{{ tag.name }}</span>
-      {% endfor %}
-    {% else %}
-      <span>No tag</span>
-    {% endif %}
-    <img src="{{ item.getSmallImage }}" alt="" style="width:150px">
-    <h2>{{ item.title }}</h2>
-    <p>{{ item.body }}</p>
-    <a href="{% url 'item.detail' item.id %}">more</a>
+{% block extracss %}
+{% endblock %}
+
+{% block hero %}
+<div class="bg-blur relative overflow-hidden w-full flex h-96 bg-cover bg-no-repeat blur-sm bg-center z-0" {% if hero %} style="background-image: url('{{ hero }}')"; {% else %} style="background-image: url('/static/img/bg-0.jpg')"; {% endif %}>
+  <div class="relative z-20 max-w-5xl  text-white container mx-4 lg:mx-auto flex flex-col sm:flex-row items-center justify-center">
+    <div class="w-full sm:w-1/2">
+      <h1 class="text-4xl sm:text-7xl font-bold mb-8">Do you love Japan?</h1>
+      <p class="text-xl">どこか知らない、日本の街並み。</p>
+    </div>
+    <div class="w-full sm:w-1/2">
+      <img src="" alt="">
+    </div>
   </div>
-{% endfor %}
 </div>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-2 sm:mx-4 md:mx-0 my-8 lg:max-w-5xl">
+  {% include '../components/_page_header.html' with title='アイテム一覧' action='投稿する' %}
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+  {% for item in object_list %}
+    {% include '../components/_card.html' %}
+  {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  const likes = document.querySelectorAll('.js-like')
+  likes.forEach((el) => {
+    el.addEventListener('click', (e) => {
+      let data = new FormData()
+      const itemId = el.getAttribute('data-itemid')
+      const islike = el.getAttribute('data-islike')
+      console.log(islike)
+      data.append('pk', itemId)
+      data.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+
+      axios.post(`/item/like/${itemId}/`, data)
+        .then(res => {
+          el.querySelector('span').textContent = res.data.cnt
+          if (islike === 'True') {
+            el.classList.remove('text-red-300')
+            el.classList.add('text-gray-400')
+            el.setAttribute('data-islike', 'False')
+          } else {
+            el.classList.remove('text-gray-400')
+            el.classList.add('text-red-300')
+            el.setAttribute('data-islike', 'True')
+          }
+        })
+    })
+  })
+
+</script>
 {% endblock %}

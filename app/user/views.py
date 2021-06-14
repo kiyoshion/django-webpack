@@ -6,10 +6,21 @@ from django.urls import reverse_lazy
 from django.http import JsonResponse
 
 from .models import CustomUser
+from item.models import Item, Like
 
 class UserDetail(DetailView):
   model = CustomUser
+  context_object_name = "items"
   template_name = 'user/detail.html'
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    items = Item.objects.filter(author=self.object.id)
+    likes = Item.objects.filter(likes__author=self.object.id)
+    context['items'] = items
+    context['likes'] = likes
+
+    return context
 
 class UserUpdate(LoginRequiredMixin, UpdateView):
   model = CustomUser
@@ -27,5 +38,4 @@ def AvatarUpload(request, pk):
     user = CustomUser.objects.get(pk=pk)
     user.avatar = avatar
     user.save(update_fields=['avatar'])
-    # new_avatar = CustomUser.objects.filter(pk=pk).update(avatar=avatar)
     return JsonResponse({ 'url': user.avatar.url})

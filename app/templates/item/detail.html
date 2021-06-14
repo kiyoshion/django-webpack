@@ -5,25 +5,82 @@
 {% block head_title %}{{ object.title }} | {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1>{{ object.title }}</h1>
-<p>by {{ object.author }}</p>
-<span>{{ object.created_at }} {{ object.updated_at }}</span>
-{% if object.tags.all %}
-  <div>
-  {% for tag in object.tags.all %}
-    <span>{{ tag.name }}</span>
-  {% endfor %}
+<div class="max-w-5xl mx-auto my-8">
+  <h1 class="text-2xl font-bold mb-4">{{ object.title }}</h1>
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center">
+      <img class="w-8 h-8 object-cover rounded-full mr-2" src="{{ object.author.getAvatar }}" alt="{{ object.author.username }}">
+      <div>
+        <p class="mb-1">{{ object.author.username }}</p>
+        <div class="flex">
+          <i class="fas fa-calendar-alt text-gray-400 text-xs mr-1"></i>
+          <span class="text-gray-400 text-xs">{{ object.created_at|date:"Y/m/j" }}に公開</span>
+        </div>
+      </div>
+    </div>
+    {% if object.tags.all %}
+    <div class="flex">
+      {% for tag in object.tags.all %}
+      <span class="bg-gray-200 rounded-sm ml-2"><a class="block text-xs px-4 py-2" href="{% url 'item.detail' tag.id %}">{{ tag.name }}</a></span>
+      {% endfor %}
+    </div>
+    {% endif %}
   </div>
-{% endif %}
-<div>
-  <img src="{{ object.getThumbnailImage }}" alt="{{ object.title }}" style="width:600px;">
+  <div class="shadow-sm">
+    <div>
+      <img src="{{ object.getThumbnailImage }}" alt="{{ object.title }}" style="width:600px;">
+    </div>
+    <div class="p-8 mb-4 bg-white">
+      <p>{{ object.body }}</p>
+    </div>
+  </div>
+  {% if user.id == object.author.id %}
+  <div class="flex justify-end">
+    <div class="flex text-blue-500">
+      <div class="flex mr-4">
+        <i class="fas fa-pencil-alt mr-1"></i>
+        <a class="" href="{% url 'item.update' object.pk %}">編集</a>
+      </div>
+      <div class="flex">
+        <i class="fas fa-trash-alt mr-1"></i>
+        <a class="" href="{% url 'item.delete' object.pk %}">削除</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <h3 class="text-xl my-4 font-bold">コメント</h3>
+  {% if object.comment_set.all %}
+    <div class="grid grid-cols-1 gap-y-4">
+    {% for c in object.comment_set.all %}
+    <div class="p-8 bg-white shadow-sm">
+      <div class="flex items-center">
+        <img class="w-8 h-8 object-cover rounded-full mr-2" src="{{ c.author.getAvatar }}" alt="{{ object.author.username }}">
+        <div>
+          <p class="mb-1">{{ c.author.username }}</p>
+          <div class="flex">
+            <span class="text-gray-400 text-xs">{{ c.created_at|date:"Y/m/d H:i" }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4">
+        <p>{{ c.body }}</p>
+      </div>
+    </div>
+    {% endfor %}
+    </div>
+  {% else %}
+  <p>No comment</p>
+  {% endif %}
+  <a class="btn btn-gray my-4" href="{% url 'item.list' %}">もどる</a>
+  <h3 class="text-xl my-4 font-bold">コメントを書く</h3>
+  <div>
+    <form action="{% url 'item.create_comment' object.id %}" method="POST">
+      {% csrf_token %}
+      <textarea name="comment" id="" cols="50" rows="5" class="input"></textarea>
+      <div class="text-center">
+        <button type="submit" class="btn btn-black btn-wide">送信</button>
+      </div>
+    </form>
+  </div>
 </div>
-<p>{{ object.body }}</p>
-{% if user.id == object.author.id %}
-<div>
-  <a href="{% url 'item.update' object.pk %}">Edit</a>
-  <a href="{% url 'item.delete' object.pk %}">Delete</a>
-</div>
-{% endif %}
-<a href="{% url 'item.list' %}">Back</a>
 {% endblock %}

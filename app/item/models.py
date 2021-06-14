@@ -17,6 +17,10 @@ class Tag(models.Model):
   def __str__(self):
     return self.name
 
+class Like(models.Model):
+  user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+  created_at = models.DateTimeField(auto_now_add=True)
+
 class Item(models.Model):
   title = models.CharField(max_length=50)
   body = models.TextField()
@@ -36,6 +40,7 @@ class Item(models.Model):
   updated_at = models.DateTimeField(auto_now=True)
 
   tags = models.ManyToManyField(Tag)
+  likes = models.ManyToManyField(Like)
 
   def __str__(self):
     return '{}({})'.format(self.title, self.author)

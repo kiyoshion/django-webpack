@@ -10,6 +10,16 @@
 {% else  %}
 <h1>{{ object.username }}</h1>
 {% endif %}
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+  {% for item in items %}
+    {% include '../components/_card.html' %}
+  {% endfor %}
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+  {% for item in likes %}
+    {% include '../components/_card.html' %}
+  {% endfor %}
+  </div>
 {% if object.plofile %}
 <p>{{ object.profile }}</p>
 {% endif %}

@@ -2,9 +2,27 @@
 
 {% block head_title %}Home | {{ block.super }}{% endblock %}
 
+{% block hero %}
+<section class="hero is-white">
+  <div class="hero-body container">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-128x128">
+          <img class="is-rounded" src="{{ user.getAvatar }}">
+        </figure>
+      </div>
+      <div class="media-content">
+        <h2 class="title is-size-4">{{ user.username }}</h2>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
 {% block content %}
 {% if user.is_authenticated %}
-<h1>こんにちは, {% if user.displayname %}{{ user.displayname }}{% endif %}@{{ user.get_username }}さん</h1>
+
+<h1>{% if user.displayname %}{{ user.displayname }}{% endif %}@{{ user.get_username }}さん</h1>
 {% if user.profile %}
 <p>{{ user.profile }}</p>
 {% endif %}
@@ -24,7 +42,6 @@
 {% endblock %}
 
 {% block extrajs %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 <script>
   const avatarForm = document.querySelector('#avatar-form')
   const avatar = document.querySelector('#avatar')

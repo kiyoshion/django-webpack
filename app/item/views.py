@@ -4,26 +4,27 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, FormView
 from django.urls import reverse_lazy
 from django.http import Http404
+from django.http.response import JsonResponse
 
-from .models import Item, Tag, Comment
+from .models import Item, Tag, Comment, Like
 
 class ItemList(ListView):
   allow_empty = True
   model = Item
   template_name = 'item/list.html'
 
+  def get_queryset(self):
+    return Item.objects.order_by('-created_at')
+
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
     items = Item.objects.all()
-    for i in items:
-      for c in i.comment_set.all():
-        print(vars(c))
     try:
       hero = Item.objects.latest("created_at")
+      context['hero'] = hero.getThumbnailImage()
     except Item.DoesNotExist:
-      raise Http404()
+      print('404')
       # hero = get_object_or_404(Item, )
-    context['hero'] = hero.getThumbnailImage()
     return context
 
 
@@ -34,8 +35,6 @@ class ItemList(ListView):
 class ItemDetail(DetailView):
   model = Item
   template_name = 'item/detail.html'
-
-  print(vars(Item))
 
   # def get_context_data(self, **kwargs):
   #   context = super().get_context_data(**kwargs)
@@ -127,7 +126,22 @@ def create_comment(request, pk):
 
   if request.method == 'POST':
     item = Item.objects.get(pk=pk)
-    print(vars(item))
     comment = Comment(body=request.POST.get('comment'), author=request.user, item=item)
     comment.save()
     return redirect('item.detail', pk=pk)
+
+def like(request, pk):
+
+  if request.method == 'POST':
+    item = Item.objects.get(pk=pk)
+    like = item.likes.filter(user=request.user)
+    flg = like.exists()
+    if flg:
+      like.delete()
+    else:
+      l = Like(user=request.user, item=item)
+      l.save()
+      item.likes.add(l)
+    cnt = item.likes.count()
+    data = {"cnt": cnt}
+    return JsonResponse(data)

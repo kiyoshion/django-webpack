@@ -1,7 +1,7 @@
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="text-gray-900 leading-tight">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,12 +12,18 @@
   {% block extracss %}{% endblock %}
 
 </head>
-<body>
+<body class="min-h-screen bg-gray-50">
   {% include 'layouts/_header.html' %}
-  {% block content %}
-  {% endblock %}
+
+  {% block hero %}{% endblock %}
+
+  <div class="relative overflow-hidden js-blur z-10 flex items-center justify-center sm:mx-auto">
+    {% block content %}{% endblock %}
+  </div>
+
   {% include 'layouts/_footer.html' %}
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
   {% render_bundle 'main' 'js' %}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.2.0/tagify.polyfills.min.js"></script>
