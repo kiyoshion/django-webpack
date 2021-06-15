@@ -3,10 +3,9 @@
 {% block head_title %}{{ object.title }} | {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="sm:w-2/3 max-w-5xl mx-auto">
-  <div class="mx-4 sm:mx-0 my-4 sm:my-8">
-    <div>
-    <h1 class="text-2xl font-bold">アイテムを投稿する</h1>
+<div class="container my-8 sm:mx-auto sm:w-2/3 max-w-5xl">
+  <div class="mx-4">
+    <h1 class="text-2xl font-bold">アイテムを編集する</h1>
     <div class="bg-white p-4 sm:p-8 my-8 shadow-sm w-full">
       <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -45,7 +44,6 @@
       </div>
       <a class="btn btn-gray" href="{% url 'item.detail' item.id %}">キャンセル</a>
     </div>
-  </div>
 </div>
 {% endblock %}
 

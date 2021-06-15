@@ -15,13 +15,14 @@ class ItemList(ListView):
   allow_empty = True
   model = Item
   template_name = 'item/list.html'
+  paginate_by = 8
 
   def get_queryset(self):
     try:
       sort = self.request.GET.get('sort')
-      return Item.objects.annotate(q_count=Count(sort)).order_by('-q_count')[:10]
+      return Item.objects.annotate(q_count=Count(sort)).order_by('-q_count')
     except FieldError:
-      return Item.objects.order_by('-created_at')[:10]
+      return Item.objects.order_by('-created_at')
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)

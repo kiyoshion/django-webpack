@@ -4,7 +4,7 @@
 
 @layer components {
   .btn {
-    @apply whitespace-nowrap inline-flex items-center justify-center px-4 py-3 border border-transparent rounded-sm shadow-sm text-sm
+    @apply whitespace-nowrap inline-flex items-center justify-center px-4 py-3 border border-transparent rounded-sm shadow-sm h-11 sm:h-auto text-xs sm:text-sm
   }
   .btn-full {
     @apply w-full
