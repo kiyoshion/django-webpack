@@ -23,7 +23,17 @@
 
 {% block content %}
 <div class="container mx-4 my-8 lg:max-w-5xl">
-  {% include '../components/_page_header.html' with title='アイテム一覧' action='投稿する' %}
+  <div class="mx-4 sm:mx-0 my-4 sm:my-4 flex items-center justify-between">
+    <h1 class="text-2xl font-bold">アイテム</h1>
+    <div>
+      <select name="sort" id="sort" class="w-32 input mr-4 cursor-pointer">
+        <option value="created_at">最新順</option>
+        <option value="likes">いいね順</option>
+        <option value="comment">コメント順</option>
+      </select>
+      <a class="btn btn-black" href="{% url 'item.create' %}">投稿する</a>
+    </div>
+  </div>
   <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
   {% for item in object_list %}
     {% include '../components/_card.html' %}
@@ -58,6 +68,15 @@
           }
         })
     })
+  })
+
+  const sort = document.querySelector('#sort'),
+        params = new URLSearchParams(window.location.search),
+        str = params.get('sort')
+  sort.value = str ? str : 'created_at'
+  sort.addEventListener('change', () => {
+    const v = sort.value
+    location.href = `/item/?sort=${v}`
   })
 
 </script>

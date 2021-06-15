@@ -27,7 +27,7 @@
         {% if item.comment_set.all %}
         <div class="flex items-center ml-2">
           {% for c in item.comment_set.all|dictsort:'created_at'|slice:":10" %}
-            {% ifchanged %}<img class="w-6 h-6 rounded-full -ml-2" src="{{ c.author.getAvatar }}" >{% endifchanged %}
+            {% ifchanged %}<img class="w-6 h-6 rounded-full -ml-2 border border-gray-100" src="{{ c.author.getAvatar }}" >{% endifchanged %}
           {% endfor %}
           <div class="text-gray-400">
             <i class="fa fa-comment ml-2"></i>

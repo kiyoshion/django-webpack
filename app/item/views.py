@@ -6,6 +6,8 @@ from django.urls import reverse_lazy
 from django.http import Http404
 from django.http.response import JsonResponse
 from django.conf import settings
+from django.db.models import Count
+from django.core.exceptions import FieldError
 
 from .models import Item, Tag, Comment, Like
 
@@ -15,8 +17,11 @@ class ItemList(ListView):
   template_name = 'item/list.html'
 
   def get_queryset(self):
-
-    return Item.objects.order_by('-created_at')
+    try:
+      sort = self.request.GET.get('sort')
+      return Item.objects.annotate(q_count=Count(sort)).order_by('-q_count')[:10]
+    except FieldError:
+      return Item.objects.order_by('-created_at')[:10]
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
@@ -28,7 +33,6 @@ class ItemList(ListView):
         context['hero'] = settings.STATIC_URL + 'img/bg-0.jpg'
     except Item.DoesNotExist:
       print('404')
-
     return context
 
 class ItemDetail(DetailView):
@@ -66,7 +70,6 @@ class ItemDelete(LoginRequiredMixin, DeleteView):
 
   def get_queryset(self):
     queryset = super().get_queryset()
-
     return queryset.filter(author=self.request.user)
 
 class ItemUpdate(LoginRequiredMixin, UpdateView):
@@ -82,12 +85,10 @@ class ItemUpdate(LoginRequiredMixin, UpdateView):
     for tag in tags:
       arr.append(tag.name)
     context['tag_arr'] = arr
-
     return context
 
   def get_queryset(self):
     queryset = super().get_queryset()
-
     return queryset.filter(author=self.request.user)
 
   def form_valid(self, form):
@@ -122,7 +123,6 @@ def create_comment(request, pk):
     item = Item.objects.get(pk=pk)
     comment = Comment(body=request.POST.get('comment'), author=request.user, item=item)
     comment.save()
-
     return redirect('item.detail', pk=pk)
 
 def delete_item(request, pk):
@@ -151,5 +151,7 @@ def like(request, pk):
       item.likes.add(l)
     cnt = item.likes.count()
     data = {"cnt": cnt}
+  else:
+    data = {"msg": 'Bad method'}
 
-    return JsonResponse(data)
+  return JsonResponse(data)
