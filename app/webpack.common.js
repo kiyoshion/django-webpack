@@ -2,6 +2,7 @@ const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const BudnleTracker = require('webpack-bundle-tracker')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
   context: __dirname,
@@ -14,9 +15,15 @@ module.exports = {
       filename: './webpack-stats.json'
     }),
     new CleanWebpackPlugin(),
+    new VueLoaderPlugin(),
   ],
   module: {
     rules: [
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+      },
+
       // {
       //   test: /\.(css|sass|scss)/,
       //   use: [
@@ -74,4 +81,10 @@ module.exports = {
       },
     ],
   },
+  resolve: {
+    extensions: ['.js', '.vue'],
+    alias: {
+      'vue$': path.resolve('./node_modules/vue/dist/vue.js')
+    }
+  }
 }

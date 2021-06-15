@@ -7,20 +7,6 @@
 {% block extracss %}
 {% endblock %}
 
-{% block hero %}
-<div class="bg-blur relative overflow-hidden w-full flex h-96 bg-cover bg-no-repeat blur-sm bg-center z-0" {% if hero %} style="background-image: url('{{ hero }}')"; {% else %} style="background-image: url('/static/img/bg-0.jpg')"; {% endif %}>
-  <div class="relative z-20 mx-4 max-w-5xl  text-white container lg:mx-auto flex flex-col sm:flex-row items-center justify-center">
-    <div class="w-full sm:w-1/2">
-      <h1 class="text-4xl sm:text-7xl font-bold mb-8">Do you love Japan?</h1>
-      <p class="text-xl">どこか知らない、日本の街並み。</p>
-    </div>
-    <div class="w-full sm:w-1/2">
-      <img src="" alt="">
-    </div>
-  </div>
-</div>
-{% endblock %}
-
 {% block content %}
 <div class="container mx-2 sm:mx-4 my-8 lg:max-w-5xl">
   <div class="mx-2 sm:mx-0 my-4 sm:my-4 flex items-center justify-between">

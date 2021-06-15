@@ -1,0 +1,94 @@
+<template>
+  <div class="w-full h-auto mx-auto relative shadow-sm bg-white rounded-lg">
+    <p>{{ item.title }}</p>
+  <!-- <a class="absolute w-full h-full z-10 top-0 left-0" href="{% url 'item.detail' item.id %}"></a>
+  <div class="flex flex-col">
+
+    <div class="order-2 w-full">
+      <figure class="aspect-w-16 aspect-h-9">
+        <img class="object-cover" src="{{ getThumbnailImage }}" alt="{{ item.title }}">
+      </figure>
+    </div>
+
+    <div class="order-1">
+      <div class="flex items-center px-4 py-3">
+        <div class="mr-2">
+          <img class="rounded-full w-8 h-8" src="{{ item.author.getAvatar }}" alt="{{ item.author.username }}">
+        </div>
+        <div class="">
+          <p class="text-gray-600 text-xs -mb-1">{{ item.author.username }}</p>
+          <time class="text-gray-400 text-xs">{{ item.created_at }}</time>
+        </div>
+      </div>
+    </div>
+
+    <div class="py-3 px-4 order-3 sm:order-3">
+      <div class="flex items-center justify-between">
+        {% if item.comment_set.all %}
+        <div class="flex items-center ml-2">
+          {% for c in item.comment_set.all|dictsort:'created_at'|slice:":10" %}
+            {% ifchanged %}<img class="w-6 h-6 rounded-full -ml-2 border border-gray-100" src="{{ c.author.getAvatar }}" >{% endifchanged %}
+          {% endfor %}
+          <div class="text-gray-400">
+            <i class="fa fa-comment ml-2"></i>
+            <span class="text-sm">{{ item.comment_set.count }}</span>
+          </div>
+        </div>
+        {% else %}
+        <div class="flex items-center text-gray-400">
+          <div class="text-gray-400">
+            <i class="fa fa-comment"></i>
+            <span class="text-sm">0</span>
+          </div>
+        </div>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <div data-itemId={{ item.id }} data-islike="{{ item }}" class="js-like relative z-20 cursor-pointer  hover:text-red-300 {% if item %}text-red-300{% else %}text-gray-400{% endif %}">
+          <i class="fa fa-heart"></i>
+          <span class="js-like-cnt text-sm">{{ item.likes.count }}</span>
+        </div>
+        {% else %}
+        <div data-itemId={{ item.id }} data-islike="False" class="js-like relative z-20 cursor-pointer hover:text-red-300 text-gray-400">
+          <i class="fa fa-heart"></i>
+          <span class="js-like-cnt text-sm">{{ item.likes.count }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div> -->
+</div>
+
+</template>
+
+<script>
+export default {
+  props: {
+    obj: {
+      type: String
+    }
+  },
+  data() {
+    return {
+      item: {}
+    }
+  },
+  mounted() {
+    this.item = JSON.parse(this.obj)
+    console.log(this.obj)
+    console.log(this.item)
+  },
+  methods: {
+    getThumbnailImage() {
+      if(this.item.image) {
+        return this.item.image_thumbnail
+      } else {
+        return '/static/img/noimage.png'
+      }
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>

@@ -1,14 +1,32 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block head_title %}Hello Django APP | {{ block.super }}{% endblock %}
 
+{% block hero %}
+<div class="bg-blur relative overflow-hidden w-full flex h-96 bg-cover bg-no-repeat blur-sm bg-center z-0" {% if hero %} style="background-image: url('{{ hero }}')"; {% else %} style="background-image: url('/static/img/bg-0.jpg')"; {% endif %}>
+  <div class="relative z-20 mx-4 max-w-5xl  text-white container lg:mx-auto flex flex-col sm:flex-row items-center justify-center">
+    <div class="w-full sm:w-1/2">
+      <h1 class="text-4xl sm:text-7xl font-bold mb-8">Do you love Japan?</h1>
+      <p class="text-xl">どこか知らない、日本の街並み。</p>
+    </div>
+    <div class="w-full sm:w-1/2">
+      <img src="" alt="">
+    </div>
+  </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<h1>Hello Django</h1>
-<ul>
-{% for item in item_list %}
-<li>
-  <a href="{% url 'item.detail' item.id %}">{{ item.created_at }} - {{ item.title }}</a>
-</li>
-{% endfor %}
-</ul>
+<div class="container mx-2 sm:mx-4 my-8 sm:my-12 lg:max-w-5xl">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mx-2 sm:mx-auto">
+  {% for item in item_list %}
+    {% include './components/_card.html' %}
+  {% endfor %}
+  </div>
+  <div class="text-center mt-8">
+    <a class="btn btn-black btn-wide" href="{% url 'item.list' %}">もっと見る</a>
+  </div>
+</div>
 {% endblock %}

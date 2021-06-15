@@ -26,6 +26,10 @@ class ItemList(ListView):
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
+    item_query_set = Item.objects.all()
+    item_list = list(item_query_set.values())
+    print(item_list)
+    context['objData'] = item_list
     try:
       hero = Item.objects.latest("created_at")
       if hero.image:

@@ -21,7 +21,7 @@
     {% if object.tags.all %}
     <div class="flex">
       {% for tag in object.tags.all %}
-      <span class="bg-gray-200 rounded-sm ml-2"><a class="block text-xs px-4 py-2" href="{% url 'item.detail' tag.id %}">{{ tag.name }}</a></span>
+      <span class="bg-gray-200 rounded-sm ml-2"><a class="block text-xs px-4 py-2" href="#">{{ tag.name }}</a></span>
       {% endfor %}
     </div>
     {% endif %}

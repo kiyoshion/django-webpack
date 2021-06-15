@@ -1,10 +1,7 @@
 import '../css/main.css'
 import "@yaireo/tagify/dist/tagify.css"
-import { config, dom, library } from '@fortawesome/fontawesome-svg-core'
-import { faEnvelope, faLock, faHeart, faCamera, faCalendarAlt, faPencilAlt, faTrashAlt, faInfoCircle, faComment, faUser, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faEnvelope, faLock, faHeart, faCamera, faCalendarAlt, faPencilAlt, faTrashAlt, faInfoCircle, faComment, faUser, faAngleLeft, faAngleRight)
-dom.watch()
+// import './loadVueComponent'
+import './loadFas'
 
 const reqImg = (r = require.context('../img', true)) => r.keys().forEach(r)
 reqImg()
