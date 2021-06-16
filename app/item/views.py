@@ -15,7 +15,7 @@ class ItemList(ListView):
   allow_empty = True
   model = Item
   template_name = 'item/list.html'
-  paginate_by = 8
+  paginate_by = 12
 
   def get_queryset(self):
     try:
@@ -26,10 +26,6 @@ class ItemList(ListView):
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
-    item_query_set = Item.objects.all()
-    item_list = list(item_query_set.values())
-    print(item_list)
-    context['objData'] = item_list
     try:
       hero = Item.objects.latest("created_at")
       if hero.image:

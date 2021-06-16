@@ -20,8 +20,8 @@
           <form id="avatar-form" method="POST" enctype="multipart/form-data">
             <input id="input" type="file" name="avatar" style="display: none">
           </form>
-          <div class="relative">
-            <img id="avatar" class="relative hover:opacity-80 z-10 rounded-full cursor-pointer" src="{{ user.getAvatar }}" alt="{{ user.username }}" width="64" height="64">
+          <div id="avatar" class="relative hover:opacity-80 z-20 cursor-pointer">
+            <img class="relative hover:opacity-80 rounded-full cursor-pointer" src="{{ user.getAvatar }}" alt="{{ user.username }}" width="64" height="64">
             <span class="absolute -bottom-2 -right-2 z-10 text-xs text-gray-100 bg-gray-800 rounded-full p-2">
               <i class="fas fa-camera"></i>
             </span>
@@ -81,6 +81,7 @@
 <script>
   const avatarForm = document.querySelector('#avatar-form')
   const avatar = document.querySelector('#avatar')
+  const img = document.querySelector('#avatar > img')
   const input = document.querySelector('#input')
 
   avatar.addEventListener('click', () => {
@@ -107,7 +108,7 @@
   })
 
   function setNewAvatar(url) {
-    avatar.src = url
+    img.src = url
   }
 
   let currentTab = 'tab1'

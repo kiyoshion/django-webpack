@@ -4,6 +4,7 @@ from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill
 from django.conf import settings
 from django import template
+from user.models import CustomUser
 import uuid
 
 register = template.Library()
@@ -56,6 +57,11 @@ class Item(models.Model):
       return settings.STATIC_URL + 'img/noimage.png'
     else:
       return self.image_thumbnail.url
+
+  def getCommenters(self):
+    cids = self.comment_set.order_by('author').distinct('author').values('id')
+    commenters = CustomUser.objects.filter(id__in=cids)
+    return commenters
 
   def save(self, *args, **kwargs):
     if self.id is None:

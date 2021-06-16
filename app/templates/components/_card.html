@@ -24,10 +24,10 @@
 
     <div class="py-3 px-4 order-3 sm:order-3">
       <div class="flex items-center justify-between">
-        {% if item.comment_set.all %}
+        {% if item.getCommenters %}
         <div class="flex items-center ml-2">
-          {% for c in item.comment_set.all|dictsort:'created_at'|slice:":10" %}
-            {% ifchanged %}<img class="w-6 h-6 rounded-full -ml-2 border border-gray-100" src="{{ c.author.getAvatar }}" >{% endifchanged %}
+          {% for c in item.getCommenters %}
+            <img class="w-6 h-6 rounded-full -ml-2 border border-gray-100" src="{{ c.getAvatar }}" >
           {% endfor %}
           <div class="text-gray-400">
             <i class="fa fa-comment ml-2"></i>
