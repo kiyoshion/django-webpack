@@ -5,3 +5,7 @@ register = template.Library()
 def myfilter(item,user):
   ilike = item.likes.filter(user=user).exists()
   return ilike
+
+@register.filter(name="get_item")
+def get_item(dictionary, key):
+  return dictionary.get(key)

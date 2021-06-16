@@ -9,6 +9,7 @@ from django.db.models import Count
 from django.core.exceptions import FieldError
 
 from .models import Item, Tag, Comment, Like
+from user.models import CustomUser
 
 class ItemList(ListView):
   allow_empty = True
@@ -33,10 +34,24 @@ class ItemList(ListView):
       except FieldError:
         return Item.objects.order_by('-created_at')
     else:
-      return Item.objects.order_by('-created_at')
+      return Item.objects.order_by('-created_at').annotate(likecnt=Count('likes')).annotate(commentcnt=Count('comments')).select_related('author').prefetch_related('likes').prefetch_related('comments').all()
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
+    items = Item.objects.order_by('-created_at').annotate(likecnt=Count('likes')).annotate(commentcnt=Count('comments')).select_related('author').prefetch_related('likes').prefetch_related('comments').all()
+    cdict = {}
+    ldict = {}
+    for i in items:
+      com = i.comments.order_by('author').distinct('author').values('id')[:4]
+      coms = CustomUser.objects.filter(id__in=com).prefetch_related('item_set').iterator()
+      cdict[i.id] = coms
+      if self.request.user.is_authenticated:
+        islike = i.likes.filter(user=self.request.user).exists()
+        ldict[i.id] = islike
+    context['islike'] = ldict
+    context['commenters'] = cdict
+    context['object_list'] = items
+
     try:
       hero = Item.objects.latest("created_at")
       if hero.image:

@@ -19,7 +19,7 @@ class Tag(models.Model):
     return self.name
 
 class Like(models.Model):
-  user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+  user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='likes')
   created_at = models.DateTimeField(auto_now_add=True)
 
 class Item(models.Model):
@@ -58,10 +58,10 @@ class Item(models.Model):
     else:
       return self.image_thumbnail.url
 
-  def getCommenters(self):
-    cids = self.comment_set.order_by('author').distinct('author').values('id')[:4]
-    commenters = CustomUser.objects.filter(id__in=cids)
-    return commenters
+  # def getCommenters(self):
+  #   cids = self.comments.order_by('author').distinct('author').values('id')[:4]
+  #   commenters = CustomUser.objects.filter(id__in=cids).prefetch_related('item_set')
+  #   return commenters
 
   def save(self, *args, **kwargs):
     if self.id is None:
@@ -78,6 +78,6 @@ class Item(models.Model):
 
 class Comment(models.Model):
   body = models.TextField()
-  author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-  item = models.ForeignKey(Item, on_delete=models.CASCADE)
+  author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
+  item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='comments')
   created_at = models.DateTimeField(auto_now_add=True)

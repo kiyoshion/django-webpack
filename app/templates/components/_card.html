@@ -24,26 +24,28 @@
 
     <div class="py-3 px-4 order-3 sm:order-3">
       <div class="flex items-center justify-between">
-        {% if item.getCommenters %}
+        {% if commenters|get_item:item.id is not None %}
         <div class="flex items-center ml-2">
-          {% for c in item.getCommenters %}
+          {% for c in commenters|get_item:item.id %}
             <img class="w-6 h-6 rounded-full -ml-2 border border-gray-100" src="{{ c.getAvatar }}" >
           {% endfor %}
           <div class="text-gray-400">
             <i class="fa fa-comment ml-2"></i>
-            <span class="text-sm">{{ item.comment_set.count }}</span>
+            <span class="text-sm">{{ item.comments.count }}</span>
           </div>
         </div>
         {% else %}
-        <div class="flex items-center text-gray-400">
-          <div class="text-gray-400">
-            <i class="fa fa-comment"></i>
-            <span class="text-sm">0</span>
+        <div class="flex items-center">
+          <div class="flex items-center text-gray-400">
+            <div class="text-gray-400">
+              <i class="fa fa-comment"></i>
+              <span class="text-sm">0</span>
+            </div>
           </div>
         </div>
         {% endif %}
-        {% if user.is_authenticated %}
-        <div data-itemId={{ item.id }} data-islike={{ item|myfilter:user }} class="js-like relative z-20 cursor-pointer  hover:text-red-300 {% if item|myfilter:user %}text-red-300{% else %}text-gray-400{% endif %}">
+        {% if user.is_authenticated and islike|get_item:item.id %}
+        <div data-itemId={{ item.id }} data-islike={{ islike|get_item:item.id }} class="js-like relative z-20 cursor-pointer  hover:text-red-300 {% if islike|get_item:item.id %}text-red-300{% else %}text-gray-400{% endif %}">
           <i class="fa fa-heart"></i>
           <span class="js-like-cnt text-sm">{{ item.likes.count }}</span>
         </div>

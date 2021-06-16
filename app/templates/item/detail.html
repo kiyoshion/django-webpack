@@ -87,6 +87,10 @@
 
 {% block extrajs %}
 <script>
-  fetchItem.del('{{ object.id }}')
+  const currentUserId = '{{ user.id }}'
+  const authorId = '{{ object.author.id }}'
+  if (currentUserId == authorId) {
+     fetchItem.del('{{ object.id }}')
+  }
 </script>
 {% endblock %}
