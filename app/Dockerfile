@@ -6,6 +6,9 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN apt update \
+    && apt install -y curl \
+    && curl -sL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt install -y nodejs \
     && pip install psycopg2 \
     && pip install psycopg2-binary
 

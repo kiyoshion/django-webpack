@@ -1,5 +1,4 @@
 const path = require('path')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const BudnleTracker = require('webpack-bundle-tracker')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
@@ -22,62 +21,6 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-      },
-
-      // {
-      //   test: /\.(css|sass|scss)/,
-      //   use: [
-      //     {
-      //       loader: MiniCssExtractPlugin.loader,
-      //     },
-      //     {
-      //       loader: 'css-loader',
-      //       options: {
-      //         sourceMap: false,
-      //       },
-      //     },
-      //     {
-      //       loader: 'sass-loader',
-      //     },
-      //   ],
-      // },
-      {
-        test: /\.(png|jpg|jpeg)/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              esModule: false,
-              name: 'img/[name].[ext]',
-              publicPath: '/',
-            },
-          },
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              moxjpeg: {
-                progressive: true,
-                quality: 80,
-              },
-            },
-          },
-        ],
-      },
-      {
-        test: /\.svg/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              esModule: false,
-              name: 'img/[name].[ext]',
-              publicPath: '/',
-            },
-          },
-          {
-            loader: 'svgo-loader',
-          },
-        ],
       },
     ],
   },

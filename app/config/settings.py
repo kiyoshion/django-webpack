@@ -134,6 +134,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'dist'),
+    os.path.join(BASE_DIR, 'config/static'),
 )
 
 MEDIA_URL = '/media/'
@@ -182,3 +183,17 @@ EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
+
+if DEBUG:
+  def show_toolbar(request):
+    return True
+
+  INSTALLED_APPS += (
+    'debug_toolbar',
+  )
+  MIDDLEWARE += (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+  )
+  DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+  }

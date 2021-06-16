@@ -13,13 +13,19 @@ services:
       - 8000
     env_file: .env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file: .env.db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   nginx:
     build: ./nginx
