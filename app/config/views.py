@@ -7,7 +7,7 @@ class IndexView(TemplateView):
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
-    context['item_list'] = Item.objects.all()[:3]
+    context['item_list'] = Item.objects.all().order_by('-created_at')[:3]
     try:
       hero = Item.objects.latest("created_at")
       if hero.image:

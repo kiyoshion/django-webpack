@@ -49,27 +49,7 @@
 
 {% block extrajs %}
 <script>
-  const img = document.querySelector('input[name="image"]'),
-        imgPreview = document.querySelector('#img-preview'),
-        imgTag = document.querySelector('#img-tag')
-
-  img.addEventListener('change', (event) => {
-    const file = event.target.files[0],
-          render = new FileReader()
-    render.onload = () => {
-      const img = new Image()
-      img.src = render.result
-      imgTag.setAttribute('src', img.src)
-    }
-    render.readAsDataURL(file)
-  })
-
-  const tags = document.querySelector('#id_tags'),
-        tagify = new Tagify(tags, {
-          originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
-        }),
-        tagArr = '{{ tag_arr }}'.replace(/\[|&#x27;|\]/g, '')
-  tagify.removeAllTags()
-  tagify.addTags(tagArr)
+  libs.setPreview('input[name="image"]', '#img-tag')
+  libs.setTags('#id_tags', '{{tag_arr}}')
 </script>
 {% endblock %}

@@ -59,7 +59,7 @@ class Item(models.Model):
       return self.image_thumbnail.url
 
   def getCommenters(self):
-    cids = self.comment_set.order_by('author').distinct('author').values('id')
+    cids = self.comment_set.order_by('author').distinct('author').values('id')[:4]
     commenters = CustomUser.objects.filter(id__in=cids)
     return commenters
 

@@ -87,26 +87,6 @@
 
 {% block extrajs %}
 <script>
-  const btnDel = document.querySelector('#btn-del')
-  const itemId = '{{ object.id }}'
-  btnDel.addEventListener('click', e => {
-    let result = window.confirm('アイテムを削除しますか？')
-    let data = new FormData()
-    data.append('pk', itemId)
-    data.append('csrfmiddlewaretoken', '{{ csrf_token }}')
-    if (result) {
-      axios.post(`/item/del/${itemId}/`, data)
-        .then(res => {
-          if (res.data.msg === 'ok') {
-            location.href = '/item/'
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    } else {
-      return false
-    }
-  })
+  fetchItem.del('{{ object.id }}')
 </script>
 {% endblock %}

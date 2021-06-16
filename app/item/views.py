@@ -1,9 +1,8 @@
 from .forms import CreateItemForm
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, FormView
+from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
-from django.http import Http404
 from django.http.response import JsonResponse
 from django.conf import settings
 from django.db.models import Count
@@ -16,12 +15,24 @@ class ItemList(ListView):
   model = Item
   template_name = 'item/list.html'
   paginate_by = 12
+  ordering = ['-created_at']
 
   def get_queryset(self):
-    try:
-      sort = self.request.GET.get('sort')
-      return Item.objects.annotate(q_count=Count(sort)).order_by('-q_count')
-    except FieldError:
+    if 'tag' in self.request.GET:
+      try:
+        tag_id = self.request.GET.get('tag')
+        tag = Tag.objects.get(pk=tag_id)
+        items = tag.item_set.all()
+        return items
+      except FieldError:
+        return Item.objects.order_by('-created_at')
+    elif 'sort' in self.request.GET:
+      try:
+        sort = self.request.GET.get('sort')
+        return Item.objects.annotate(q_count=Count(sort)).order_by('-q_count')
+      except FieldError:
+        return Item.objects.order_by('-created_at')
+    else:
       return Item.objects.order_by('-created_at')
 
   def get_context_data(self, **kwargs):
@@ -93,7 +104,6 @@ class ItemUpdate(LoginRequiredMixin, UpdateView):
     return queryset.filter(author=self.request.user)
 
   def form_valid(self, form):
-    success_url = 'item.list'
     item = form.save(commit=False)
     item.save()
 
