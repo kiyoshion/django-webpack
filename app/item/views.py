@@ -5,10 +5,10 @@ from django.views.generic import ListView, DetailView, CreateView, DeleteView, U
 from django.urls import reverse_lazy
 from django.http.response import JsonResponse
 from django.conf import settings
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.core.exceptions import FieldError
-
 from .models import Item, Tag, Comment, Like
+from user.models import CustomUser
 
 class ItemList(ListView):
   allow_empty = True
@@ -37,14 +37,45 @@ class ItemList(ListView):
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
-    try:
-      hero = Item.objects.latest("created_at")
-      if hero.image:
-        context['hero'] = hero.getThumbnailImage()
+    items = Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all().order_by('-created_at')
+    cdict = {}
+    ldict = {}
+    likecnt = {}
+    for i in items:
+      likecnt[i.id] = len(i.islike)
+      print(i.islike)
+      if not i.islike:
+        ldict[i.id] = False
       else:
-        context['hero'] = settings.STATIC_URL + 'img/bg-0.jpg'
-    except Item.DoesNotExist:
-      print('404')
+        for li in i.islike:
+          if li.user_id == self.request.user.id:
+            ldict[i.id] = True
+          else:
+            ldict[i.id] = False
+
+      commenters = []
+      for n, c in enumerate(i.comments):
+        commenters.append(c.author.getAvatar())
+        if n == 3:
+          break
+      cdict[i.id] = commenters
+
+    context['commenterslist'] = cdict
+    context['islike'] = ldict
+    context['likecnt'] = likecnt
+
+    # try:
+    #   hero = items.latest("created_at")
+    #   if hero.image:
+    #     context['hero'] = hero.getThumbnailImage()
+    #   else:
+    #     context['hero'] = settings.STATIC_URL + 'img/bg-0.jpg'
+    # except Item.DoesNotExist:
+    #   print('404')
+    # for i in items:
+    #   print(vars(i))
+    context['object_list'] = items
+    print(context['commenterslist'])
     return context
 
 class ItemDetail(DetailView):

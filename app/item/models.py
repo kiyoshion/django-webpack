@@ -59,9 +59,14 @@ class Item(models.Model):
       return self.image_thumbnail.url
 
   def getCommenters(self):
-    cids = self.comment_set.order_by('author').distinct('author').values('id')[:4]
-    commenters = CustomUser.objects.filter(id__in=cids)
-    return commenters
+    # cids = self.comment_set.select_related('author').order_by('author').distinct('author').values('id')[:4]
+    # commenters = CustomUser.objects.filter(id__in=cids).only('avatar')
+    commenters = self.comment_set.select_related('author').order_by('-created_at')[:4]
+    avs = []
+    for c in commenters:
+      avs.append(c.author.getAvatar())
+    print(avs)
+    return avs
 
   def save(self, *args, **kwargs):
     if self.id is None:
