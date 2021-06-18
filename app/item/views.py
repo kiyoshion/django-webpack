@@ -16,16 +16,17 @@ class ItemList(ListView):
   template_name = 'item/list.html'
   ordering = '-created_at'
   paginate_by = 6
+  queryset = Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all()
 
   def get_queryset(self):
     if 'sort' in self.request.GET and self.request.GET.get('sort') != 'created_at':
       sort = self.request.GET.get('sort')
       try:
-        return Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all().annotate(sort=Count(sort)).order_by('-sort')
+        return self.queryset.annotate(sort=Count(sort)).order_by('-sort')
       except FieldError:
-        return Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all().order_by('-created_at')
+        return self.queryset.order_by('-created_at')
     else:
-      return Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all().order_by('-created_at')
+      return self.queryset.order_by('-created_at')
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
@@ -59,6 +60,32 @@ class ItemList(ListView):
 class ItemDetail(DetailView):
   model = Item
   template_name = 'item/detail.html'
+  queryset = Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('tags', to_attr='item_tags')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all()
+
+  def get_queryset(self):
+    return self.queryset.filter(id=self.kwargs['pk'])
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    commentlist = []
+    for c in self.object.comment_set.select_related('author').all().order_by('-created_at'):
+      comment = {
+        'username': c.author.username,
+        'avatar': c.author.getAvatar(),
+        'created_at': c.created_at,
+        'body': c.body
+      }
+      commentlist.append(comment)
+    context['commentlist'] = commentlist
+    taglist = []
+    for t in self.object.item_tags:
+      tag = {
+        'id': t.id,
+        'name': t.name
+      }
+      taglist.append(tag)
+    context['taglist'] = taglist
+    return context
 
 class ItemCreate(LoginRequiredMixin, CreateView):
   model = Item

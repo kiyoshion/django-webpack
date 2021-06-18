@@ -18,10 +18,10 @@
         </div>
       </div>
     </div>
-    {% if object.tags.all %}
+    {% if taglist is not None %}
     <div class="flex">
-      {% for tag in object.tags.all %}
-      <span class="bg-gray-200 rounded-sm ml-2"><a class="block text-xs px-4 py-2" href="#">{{ tag.name }}</a></span>
+      {% for t in taglist %}
+      <span class="bg-gray-200 rounded-sm ml-2"><a class="block text-xs px-4 py-2" href="#">{{ t.name }}</a></span>
       {% endfor %}
     </div>
     {% endif %}
@@ -48,31 +48,21 @@
     </div>
   </div>
   {% endif %}
-  <h3 class="text-xl my-4 font-bold">コメント</h3>
-  {% if object.comment_set.all %}
+  <div class="flex items-center justify-between">
+    <h3 class="text-xl my-4 font-bold">コメント</h3>
+    <a class="text-gray-400 text-sm" href="#comment-area">コメントを書く</a>
+  </div>
+  {% if object.commentcnt > 0 %}
     <div class="grid grid-cols-1 gap-y-4">
-    {% for c in object.comment_set.all %}
-    <div class="p-8 bg-white shadow-sm">
-      <div class="flex items-center">
-        <img class="w-8 h-8 object-cover rounded-full mr-2" src="{{ c.author.getAvatar }}" alt="{{ c.author.username }}">
-        <div>
-          <p class="mb-1">{{ c.author.username }}</p>
-          <div class="flex">
-            <span class="text-gray-400 text-xs">{{ c.created_at|date:"Y/m/d H:i" }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="mt-4">
-        <p>{{ c.body }}</p>
-      </div>
-    </div>
+    {% for c in commentlist %}
+      {% include '../components/_comment.html' %}
     {% endfor %}
     </div>
   {% else %}
-  <p>No comment</p>
+  <p>コメントはありません</p>
   {% endif %}
   <a class="btn btn-gray my-4" href="{% url 'item.list' %}">もどる</a>
-  <h3 class="text-xl my-4 font-bold">コメントを書く</h3>
+  <h3 id="comment-area" class="text-xl my-4 font-bold">コメントを書く</h3>
   <div>
     <form action="{% url 'item.create_comment' object.id %}" method="POST">
       {% csrf_token %}
