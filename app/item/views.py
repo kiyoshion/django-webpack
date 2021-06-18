@@ -14,36 +14,27 @@ class ItemList(ListView):
   allow_empty = True
   model = Item
   template_name = 'item/list.html'
-  paginate_by = 12
-  ordering = ['-created_at']
+  ordering = '-created_at'
+  paginate_by = 6
 
   def get_queryset(self):
-    if 'tag' in self.request.GET:
+    if 'sort' in self.request.GET and self.request.GET.get('sort') != 'created_at':
+      sort = self.request.GET.get('sort')
       try:
-        tag_id = self.request.GET.get('tag')
-        tag = Tag.objects.get(pk=tag_id)
-        items = tag.item_set.all()
-        return items
+        return Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all().annotate(sort=Count(sort)).order_by('-sort')
       except FieldError:
-        return Item.objects.order_by('-created_at')
-    elif 'sort' in self.request.GET:
-      try:
-        sort = self.request.GET.get('sort')
-        return Item.objects.annotate(q_count=Count(sort)).order_by('-q_count')
-      except FieldError:
-        return Item.objects.order_by('-created_at')
+        return Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all().order_by('-created_at')
     else:
-      return Item.objects.order_by('-created_at')
+      return Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all().order_by('-created_at')
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
-    items = Item.objects.select_related('author').prefetch_related(Prefetch('comment_set', queryset=Comment.objects.all().select_related('author').order_by('-created_at'), to_attr='comments')).prefetch_related(Prefetch('likes', to_attr='islike')).annotate(commentcnt=Count('comment')).all().order_by('-created_at')
+    items = self.get_queryset()
     cdict = {}
     ldict = {}
     likecnt = {}
     for i in items:
       likecnt[i.id] = len(i.islike)
-      print(i.islike)
       if not i.islike:
         ldict[i.id] = False
       else:
@@ -56,26 +47,13 @@ class ItemList(ListView):
       commenters = []
       for n, c in enumerate(i.comments):
         commenters.append(c.author.getAvatar())
-        if n == 3:
+        if n == 2:
           break
       cdict[i.id] = commenters
 
     context['commenterslist'] = cdict
     context['islike'] = ldict
     context['likecnt'] = likecnt
-
-    # try:
-    #   hero = items.latest("created_at")
-    #   if hero.image:
-    #     context['hero'] = hero.getThumbnailImage()
-    #   else:
-    #     context['hero'] = settings.STATIC_URL + 'img/bg-0.jpg'
-    # except Item.DoesNotExist:
-    #   print('404')
-    # for i in items:
-    #   print(vars(i))
-    context['object_list'] = items
-    print(context['commenterslist'])
     return context
 
 class ItemDetail(DetailView):
