@@ -150,6 +150,9 @@ class ItemDetail(DetailView):
       .only(*values)
   )
 
+  def get_queryset(self):
+      return self.queryset.filter(id=self.kwargs['pk'])
+
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
     commentlist = []
@@ -162,6 +165,7 @@ class ItemDetail(DetailView):
       }
       commentlist.append(comment)
     context['commentlist'] = commentlist
+    context['commentcnt'] = self.object.comment__count
     taglist = []
     for t in self.object.item_tags:
       tag = {

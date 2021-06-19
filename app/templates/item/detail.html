@@ -52,7 +52,7 @@
     <h3 class="text-xl my-4 font-bold">コメント</h3>
     <a class="text-gray-400 text-sm" href="#comment-area">コメントを書く</a>
   </div>
-  {% if object.commentcnt > 0 %}
+  {% if commentcnt > 0 %}
     <div class="grid grid-cols-1 gap-y-4">
     {% for c in commentlist %}
       {% include '../components/_comment.html' %}
