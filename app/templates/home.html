@@ -53,25 +53,37 @@
 <div class="tab-items container mx-2 sm:mx-4 md:mx-0 my-8 lg:max-w-5xl">
   <div id="tab-1" class="block">
     <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
-    {% for item in items %}
-      {% include './components/_card.html' %}
-    {% endfor %}
+      {% if myitems %}
+        {% for item in myitems %}
+          {% include './components/_card.html' %}
+        {% endfor %}
+      {% else %}
+        <p>まだ投稿していません</p>
+      {% endif %}
     </div>
   </div>
   <div id="tab-2" class="hidden">
     <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
-    {% for item in likes %}
-      {% include './components/_card.html' %}
-    {% endfor %}
+      {% if mylikes %}
+        {% for item in mylikes %}
+          {% include './components/_card.html' %}
+        {% endfor %}
+      {% else %}
+        <p>いいねしていません</p>
+      {% endif %}
     </div>
   </div>
   <div id="tab-3" class="hidden">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
-    {% for c in comments %}
-      <a href="{% url 'item.detail' c.item.id %}">
+    {% if mycomments is not False %}
+      {% for c in mycomments %}
+      <a href="{% url 'item.detail' c.item_id %}">
         {% include './components/_comment.html' %}
       </a>
-    {% endfor %}
+      {% endfor %}
+    {% else %}
+      <p>コメントしていません</p>
+    {% endif %}
     </div>
   </div>
 </div>

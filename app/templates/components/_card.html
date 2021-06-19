@@ -6,14 +6,14 @@
 
     <div class="order-2 w-full">
       <figure class="aspect-w-16 aspect-h-9">
-        <img class="object-cover" src="{{ item.getThumbnailImage }}" alt="{{ item.title }}">
+        <img class="object-cover" src="{{ item.image }}" alt="{{ item.title }}">
       </figure>
     </div>
 
     <div class="order-1">
       <div class="flex items-center px-4 py-3">
         <div class="mr-2">
-          <img class="rounded-full w-8 h-8" src="{{ item.author.getAvatar }}" alt="{{ item.author.username }}">
+          <img class="rounded-full w-8 h-8" src="{{ item.author.avatar }}" alt="{{ item.author.username }}">
         </div>
         <div class="">
           <p class="text-gray-600 text-xs -mb-1">{{ item.author.username }}</p>
@@ -22,16 +22,20 @@
       </div>
     </div>
 
-    <div class="py-3 px-4 order-3 sm:order-3">
+    <div class="pt-3 px-4 mb-2 order-3 sm:order-3">
+      <h2 class="text-sm text-gray-600">{{ item.title }}</h2>
+    </div>
+
+    <div class="pb-3 px-4 order-3 sm:order-3">
       <div class="flex items-center justify-between">
-        {% if item.commentcnt > 0 %}
+        {% if item.comments.cnt > 0 %}
         <div class="flex items-center ml-2">
-          {% for c in commenterslist|get_item:item.id %}
+          {% for c in item.comments.avatars %}
             <img class="w-6 h-6 rounded-full -ml-2 border border-gray-100" src="{{ c }}" >
           {% endfor %}
           <div class="text-gray-400">
             <i class="fa fa-comment ml-2"></i>
-            <span class="text-sm">{{ item.commentcnt }}</span>
+            <span class="text-sm">{{ item.comments.cnt }}</span>
           </div>
         </div>
         {% else %}
@@ -42,17 +46,10 @@
           </div>
         </div>
         {% endif %}
-        {% if user.is_authenticated %}
-        <div data-itemId={{ item.id }} data-islike={{ islike|get_item:item.id }} class="js-like relative z-20 cursor-pointer  hover:text-red-300 {% if islike|get_item:item.id %}text-red-300{% else %}text-gray-400{% endif %}">
+        <div data-itemId={{ item.id }} data-islike={{ item.likes.islike }} class="js-like relative z-20 cursor-pointer  hover:text-red-300 {% if item.likes.islike %}text-red-300{% else %}text-gray-400{% endif %}">
           <i class="fa fa-heart"></i>
-          <span class="js-like-cnt text-sm">{{ likecnt|get_item:item.id }}</span>
+          <span class="js-like-cnt text-sm">{{ item.likes.cnt }}</span>
         </div>
-        {% else %}
-        <div data-itemId={{ item.id }} data-islike="False" class="js-like relative z-20 cursor-pointer hover:text-red-300 text-gray-400">
-          <i class="fa fa-heart"></i>
-          <span class="js-like-cnt text-sm">{{ likecnt|get_item:item.id }}</span>
-        </div>
-        {% endif %}
       </div>
     </div>
   </div>

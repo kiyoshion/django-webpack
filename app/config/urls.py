@@ -4,13 +4,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from . import views
-from user.views import HomeDetail
+from item.views import IndexView, HomeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
-    # path('home/', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('home/', HomeDetail.as_view(), name='home'),
+    path('', IndexView.as_view(), name='index'),
+    path('home/', HomeView.as_view(), name='home'),
     path('accounts/', include('allauth.urls')),
     path('user/', include('user.urls')),
     path('item/', include('item.urls')),
