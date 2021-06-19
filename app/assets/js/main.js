@@ -8,15 +8,5 @@ window.libs = lib.default
 window.fetchItem = api.fetchItem
 window.fetchUser = api.fetchUser
 
-const path = location.pathname
-const header = document.querySelector('.header')
-const footer = document.querySelector('.footer')
-if (path.match(/account/)) {
-  const jsBlur = document.querySelector('.js-blur')
-  const imgPath = '/static/img/bg-0.jpg'
-  if (jsBlur) {
-    jsBlur.classList.add('bg-blur')
-    jsBlur.style.backgroundImage = `url("${imgPath}")`
-    jsBlur.style.minHeight = `calc(100vh - ${header.clientHeight + footer.clientHeight}px)`
-  }
-}
+lib.default.setBlur('.js-blur', /account/, '/static/img/bg-0.jpg')
+lib.default.setMenu()

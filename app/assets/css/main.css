@@ -40,6 +40,14 @@ body {
   @apply text-gray-700
 }
 
+.menu-user.is-active {
+  display: block!important;
+}
+
+.menu-area.is-active {
+  display: block!important;
+}
+
 .bg-blur {
   position: relative;
   background-repeat: no-repeat;
