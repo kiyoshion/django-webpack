@@ -18,9 +18,9 @@
         </div>
       </div>
     </div>
-    {% if taglist is not None %}
+    {% if object.hasTags is not None %}
     <div class="flex">
-      {% for t in taglist %}
+      {% for t in object.hasTags %}
       <span class="bg-gray-200 rounded-sm ml-2"><a class="block text-xs px-4 py-2" href="#">{{ t.name }}</a></span>
       {% endfor %}
     </div>
@@ -52,9 +52,9 @@
     <h3 class="text-xl my-4 font-bold">コメント</h3>
     <a class="text-gray-400 text-sm" href="#comment-area">コメントを書く</a>
   </div>
-  {% if commentcnt > 0 %}
+  {% if object.comment__count > 0 %}
     <div class="grid grid-cols-1 gap-y-4">
-    {% for c in commentlist %}
+    {% for c in object.comments %}
       {% include '../components/_comment.html' %}
     {% endfor %}
     </div>

@@ -1,3 +1,4 @@
+from django.views.generic.detail import SingleObjectMixin
 from .forms import CreateItemForm
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -63,59 +64,48 @@ class ItemList(ListView):
 class ItemDetail(DetailView):
   model = Item
   template_name = 'item/detail.html'
-  values = ('id', 'title', 'body', 'created_at', 'author_id', 'author_id__username', 'author_id__avatar', 'image', 'likes__user_id', 'likes__user_id__avatar')
-  values_comment = ('id', 'body', 'created_at', 'item_id', 'author_id', 'author_id__username', 'author_id__avatar')
-  values_like = ('id', 'created_at', 'user_id', 'user_id__avatar', 'user_id__username')
+  values = {
+    'origin': ('id', 'title', 'body', 'created_at', 'author_id', 'author_id__username', 'author_id__avatar', 'image', 'likes__user_id', 'likes__user_id__avatar'),
+    'comment': ('id', 'body', 'created_at', 'item_id', 'author_id', 'author_id__username', 'author_id__avatar'),
+      'like': ('id', 'created_at', 'user_id', 'user_id__avatar', 'user_id__username')
+    }
   queryset = (
     Item.objects.all()
       .select_related('author')
       .prefetch_related(
         Prefetch(
           'comment_set',
-          queryset=Comment.objects.all().select_related('author').order_by('-created_at').only(*values_comment),
+          queryset=Comment.objects.all().select_related('author').order_by('-created_at').only(*values['comment']),
           to_attr='comments'
           )
         )
       .prefetch_related(
         Prefetch(
           'likes',
-          queryset=Like.objects.all().select_related('user').order_by('-created_at').only(*values_like),
+          queryset=Like.objects.all().select_related('user').order_by('-created_at').only(*values['like']),
           to_attr='islike'
           )
       )
-      .prefetch_related(Prefetch('tags', to_attr='item_tags'))
+      .prefetch_related(
+        Prefetch(
+          'tags',
+          queryset=Tag.objects.all(),
+          to_attr='hasTags'
+          )
+      )
       .annotate(
         Count('comment'),
         Count('likes'),
       )
-      .only(*values)
+      .only(*values['origin'])
   )
 
   def get_queryset(self):
-      return self.queryset.filter(id=self.kwargs['pk'])
+      return self.queryset
 
   def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    commentlist = []
-    for c in self.object.comment_set.select_related('author').all().order_by('-created_at'):
-      comment = {
-        'username': c.author.username,
-        'avatar': c.author.getAvatar(),
-        'created_at': c.created_at,
-        'body': c.body
-      }
-      commentlist.append(comment)
-    context['commentlist'] = commentlist
-    context['commentcnt'] = self.object.comment__count
-    taglist = []
-    for t in self.object.item_tags:
-      tag = {
-        'id': t.id,
-        'name': t.name
-      }
-      taglist.append(tag)
-    context['taglist'] = taglist
-    return context
+      context = super().get_context_data(**kwargs)
+      return context
 
 class ItemCreate(LoginRequiredMixin, CreateView):
   model = Item
