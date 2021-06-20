@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView, CreateView, DeleteView, U
 from django.urls import reverse_lazy
 from django.http.response import JsonResponse
 from django.conf import settings
-from django.db.models import Count, Prefetch
+from django.db.models import Count, Prefetch, Q
 from django.core.exceptions import FieldError
 from .models import Item, Tag, Comment, Like
 
@@ -15,23 +15,25 @@ class ItemList(ListView):
   template_name = 'item/list.html'
   ordering = '-created_at'
   paginate_by = 6
-  values = ('id', 'title', 'body', 'created_at', 'author_id', 'author_id__username', 'author_id__avatar', 'image', 'likes__user_id', 'likes__user_id__avatar')
-  values_comment = ('id', 'body', 'created_at', 'item_id', 'author_id', 'author_id__username', 'author_id__avatar')
-  values_like = ('id', 'created_at', 'user_id', 'user_id__avatar', 'user_id__username')
+  values = {
+    'origin': ('id', 'title', 'body', 'created_at', 'author_id', 'author_id__username', 'author_id__avatar', 'image', 'likes__user_id', 'likes__user_id__avatar'),
+    'comment': ('id', 'body', 'created_at', 'item_id', 'author_id', 'author_id__username', 'author_id__avatar'),
+      'like': ('id', 'created_at', 'user_id', 'user_id__avatar', 'user_id__username')
+    }
   queryset = (
     Item.objects.all()
       .select_related('author')
       .prefetch_related(
         Prefetch(
           'comment_set',
-          queryset=Comment.objects.all().select_related('author').order_by('-created_at').only(*values_comment),
+          queryset=Comment.objects.all().select_related('author').order_by('-created_at').only(*values['comment']),
           to_attr='comments'
           )
         )
       .prefetch_related(
         Prefetch(
           'likes',
-          queryset=Like.objects.all().select_related('user').order_by('-created_at').only(*values_like),
+          queryset=Like.objects.all().select_related('user').order_by('-created_at').only(*values['like']),
           to_attr='islike'
           )
       )
@@ -39,84 +41,23 @@ class ItemList(ListView):
         Count('comment'),
         Count('likes'),
       )
-      .only(*values)
+      .only(*values['origin'])
   )
 
   def get_queryset(self):
+    q = self.queryset.order_by('-created_at')
+    if self.request.user.is_authenticated:
+      q = q.annotate(currentuser_islike=Count('likes', filter=Q(likes__user=self.request.user)))
     if 'sort' in self.request.GET and self.request.GET.get('sort') != 'created_at':
       sort = self.request.GET.get('sort')
       try:
-        return self.queryset.annotate(sort=Count(sort)).order_by('-sort', '-created_at')
+        q = q.annotate(sort=Count(sort)).order_by('-sort', '-created_at')
       except FieldError:
-        return self.queryset.order_by('-created_at')
-    else:
-      return self.queryset.order_by('-created_at')
-
-  def get_item(self, i, list):
-    item = {}
-    data_item = self.get_item_meta(i)
-    item.update(data_item)
-    data_likes = self.get_like_meta(i, self.request.user)
-    item.update(data_likes)
-    data_comments = self.get_comment_meta(i)
-    item.update(data_comments)
-    list.append(item)
-    return list
-
-  def get_item_meta(self, item):
-    data = {
-      'id': item.id,
-      'title': item.title,
-      'body': item.body,
-      'image': item.getThumbnailImage(),
-      'author': {
-        'id': item.author.id,
-        'username': item.author.username,
-        'avatar': item.author.getAvatar(),
-      },
-      'created_at': item.created_at
-    }
-    return data
-
-  def get_like_meta(self, item, user):
-    is_like = False
-    for l in item.islike:
-      if l.user_id == user.id:
-        is_like = True
-        break
-      else:
-        is_like = False
-    data = {
-      'likes': {
-        'cnt': item.likes__count,
-        'islike': is_like
-      }
-    }
-    return data
-
-  def get_comment_meta(self, item):
-    list = []
-    limit = 2
-    for n, c in enumerate(item.comments):
-      list.append(c.author.getAvatar())
-      if n == limit:
-        break
-    data = {
-      'comments': {
-        'cnt': item.comment__count,
-        'avatars': list,
-      }
-    }
-    return data
+        q = q
+    return q
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
-    items = self.get_queryset()
-    itemlist = []
-    for i in items:
-      self.get_item(i, itemlist)
-    context['item_list'] = itemlist
-
     return context
 
 class ItemDetail(DetailView):
@@ -273,7 +214,6 @@ def delete_item(request, pk):
   return JsonResponse(data)
 
 def like(request, pk):
-
   if request.method == 'POST':
     item = Item.objects.get(pk=pk)
     like = item.likes.filter(user=request.user)
@@ -284,13 +224,16 @@ def like(request, pk):
       l = Like(user=request.user, item=item)
       l.save()
       item.likes.add(l)
-    cnt = item.likes.count()
-    data = {"cnt": cnt}
+    cnt_all = item.likes.count()
+    cnt_current = like.count()
+    data = {
+      "cntAll": cnt_all,
+      "cntCurrent": cnt_current
+      }
   else:
-    data = {"msg": 'Bad method'}
+    data = { "msg": 'Bad method' }
 
   return JsonResponse(data)
-
 
 class IndexView(ItemList):
   template_name = 'index.html'
@@ -303,27 +246,18 @@ index = IndexView.as_view()
 class HomeView(ItemList):
   template_name = 'home.html'
 
-  def get_comment(self, c, list):
-    comment = {
-      'username': c.author.username,
-      'avatar': c.author.getAvatar(),
-      'created_at': c.created_at,
-      'body': c.body,
-      'item_id': c.item_id
-    }
-    list.append(comment)
-    return list
-
   def get_context_data(self, **kwargs):
-    context = {}
-    items = self.get_queryset()
+    context = super().get_context_data(**kwargs)
 
-    # For myitems
+    items = self.get_queryset()
     myitems = items.filter(author=self.request.user)
-    myitemlist = []
-    for i in myitems:
-      self.get_item(i, myitemlist)
-    context['myitems'] = myitemlist
+    context['myitems'] = myitems
+
+    mylikes = items.filter(likes__user=self.request.user).order_by('-likes__created_at')
+    context['mylikes'] = mylikes
+
+    mycomments = Comment.objects.filter(author=self.request.user).select_related('author').order_by('-created_at')
+    context['mycomments'] = mycomments
 
     try:
       hero = myitems.first()
@@ -331,22 +265,4 @@ class HomeView(ItemList):
     except (Item.DoesNotExist, AttributeError):
       context['hero'] = settings.STATIC_URL + 'img/bg-0.jpg'
 
-    # For mylikes
-    mylikes = items.filter(likes__user=self.request.user).order_by('-likes__created_at')
-    mylikelist = []
-    for i in mylikes:
-      self.get_item(i, mylikelist)
-    context['mylikes'] = mylikelist
-
-    # For mycomments
-    mycomments = []
-    precomments = Comment.objects.filter(author=self.request.user).select_related('author').order_by('-created_at')
-    if precomments.exists():
-      for c in precomments:
-        self.get_comment(c, mycomments)
-      context['mycomments'] = mycomments
-    else:
-      context['mycomments'] = False
-
-    print(context)
     return context

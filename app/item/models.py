@@ -58,15 +58,25 @@ class Item(models.Model):
     else:
       return self.image_thumbnail.url
 
-  def getCommenters(self):
-    # cids = self.comment_set.select_related('author').order_by('author').distinct('author').values('id')[:4]
-    # commenters = CustomUser.objects.filter(id__in=cids).only('avatar')
-    commenters = self.comment_set.select_related('author').order_by('-created_at')[:4]
-    avs = []
-    for c in commenters:
-      avs.append(c.author.getAvatar())
-    print(avs)
-    return avs
+  def get_currentuser_islike(self, user_id):
+    is_like = False
+    for l in self.islike:
+      if l.user_id == user_id:
+        is_like = True
+        break
+      else:
+        is_like = False
+    return is_like
+
+
+  def get_comment_author_avatar(self):
+    list = []
+    limit = 2
+    for n, c in enumerate(self.comments):
+      list.append(c.author.getAvatar())
+      if n == limit:
+        break
+    return list
 
   def save(self, *args, **kwargs):
     if self.id is None:

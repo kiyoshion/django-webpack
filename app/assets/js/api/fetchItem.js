@@ -7,25 +7,25 @@ const like = () => {
 
   likes.forEach((el) => {
     el.addEventListener('click', (e) => {
-      let data = new FormData()
       const itemId = el.getAttribute('data-itemid')
       const islike = el.getAttribute('data-islike')
-      data.append('pk', itemId)
-      data.append('csrfmiddlewaretoken', csrftoken)
+      if (islike === '1' || islike === '0') {
+        let data = new FormData()
+        data.append('pk', itemId)
+        data.append('csrfmiddlewaretoken', csrftoken)
 
-      axios.post(`/item/like/${itemId}/`, data)
-        .then(res => {
-          el.querySelector('span').textContent = res.data.cnt
-          if (islike === 'True') {
-            el.classList.remove('text-red-300')
-            el.classList.add('text-gray-400')
-            el.setAttribute('data-islike', 'False')
-          } else {
-            el.classList.remove('text-gray-400')
-            el.classList.add('text-red-300')
-            el.setAttribute('data-islike', 'True')
-          }
-        })
+        axios.post(`/item/like/${itemId}/`, data)
+          .then(res => {
+            el.querySelector('span').textContent = res.data.cntAll
+            if (res.data.cntCurrent === 0) {
+              el.classList.remove('is-like')
+              el.setAttribute('data-islike', 0)
+            } else {
+              el.classList.add('is-like')
+              el.setAttribute('data-islike', 1)
+            }
+          })
+      }
     })
   })
 }

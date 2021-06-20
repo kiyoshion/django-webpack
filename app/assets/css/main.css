@@ -33,6 +33,12 @@
   .input-icon-wrapper {
     @apply absolute top-1/2 transform -mt-2 -translate-y-1/2 left-0 pl-3 flex items-center pointer-events-none text-gray-400 text-lg
   }
+  .js-like {
+    @apply text-gray-400
+  }
+  .js-like.is-like {
+    @apply text-red-300
+  }
 }
 
 html,

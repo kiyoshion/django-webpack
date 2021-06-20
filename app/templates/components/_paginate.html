@@ -1,7 +1,9 @@
+{% load myfilter %}
+
 <nav class="my-8">
   <ul class="flex items-center justify-center overflow-x-hidden">
       {% if page_obj.has_previous %}
-        <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-angle-left"></i></a></li>
+        <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?{% url_replace request 'page' page_obj.previous_page_number %}"><i class="fas fa-angle-left"></i></a></li>
       {% else %}
         <li><span class="flex items-center justify-center select-none bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm"><i class="fas fa-angle-left"></i></span></li>
       {% endif %}
@@ -11,25 +13,25 @@
           {% if page_obj.number == 1 %}
             <li><span class="flex items-center justify-center select-none bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm">{{ i }}</span></li>
           {% else %}
-            <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?page={{ i }}">{{ i }}</a></li>
+            <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?{% url_replace request 'page' i %}">{{ i }}</a></li>
           {% endif %}
         {% elif i == page_obj.paginator.num_pages %}
           {% if page_obj.number == i %}
             <li><span class="flex items-center justify-center select-none bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm">{{ i }}</span></li>
           {% else %}
-            <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?page={{ i }}">{{ i }}</a></li>
+            <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?{% url_replace request 'page' i %}">{{ i }}</a></li>
           {% endif %}
         {% elif page_obj.number == i %}
           <li><span class="flex items-center justify-center select-none bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm">{{ i }}</span></li>
         {% elif i > page_obj.number|add:'-2' and i < page_obj.number|add:'2' %}
-          <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?page={{ i }}">{{ i }}</a></li>
+          <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?{% url_replace request 'page' i %}">{{ i }}</a></li>
         {% else %}
           <li>・</li>
         {% endif %}
       {% endfor %}
 
       {% if page_obj.has_next %}
-        <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-angle-right"></i></a></li>
+        <li><a class="flex items-center justify-center select-none hover:bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm" href="?{% url_replace request 'page' page_obj.next_page_number %}"><i class="fas fa-angle-right"></i></a></li>
       {% else %}
         <li><span class="flex items-center justify-center select-none bg-gray-200 rounded-full w-4 h-4 p-4 mr-2 sm:w-6 sm:h-6 sm:p-6 sm:mr-4 text-sm"><i class="fas fa-angle-right"></i></span></li>
       {% endif %}
