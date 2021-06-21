@@ -19,6 +19,9 @@ media
 static/js
 static/css
 static/admin
+static/debug_toolbar
+static/icon
+static/img
 
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
