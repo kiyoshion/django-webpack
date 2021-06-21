@@ -1,0 +1,37 @@
+{% extends '../base.html' %}
+
+{% load static %}
+
+{% block head_title %}Tag List | {{ block.super }}{% endblock %}
+
+{% block extracss %}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-2 sm:mx-4 my-8 lg:max-w-5xl">
+  <div class="mx-2 sm:mx-0 my-4 sm:my-4 flex items-center justify-between">
+    <h1 class="text-xl sm:text-2xl font-bold">{{ tag_name }}</h1>
+    <div class="flex items-center">
+      <select name="sort" id="sort" class="w-32 input mb-0 mr-4 cursor-pointer">
+        <option value="created_at">最新順</option>
+        <option value="likes">いいね順</option>
+        <option value="comment">コメント順</option>
+      </select>
+      <a class="btn btn-black" href="{% url 'item.create' %}">投稿する</a>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mx-2 sm:mx-auto">
+  {% for item in object_list %}
+    {% include '../components/_card.html' %}
+  {% endfor %}
+  </div>
+  {% include '../components/_paginate.html' %}
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  fetchItem.like()
+  fetchItem.sort('#sort', '{{ tag_id }}')
+</script>
+{% endblock %}

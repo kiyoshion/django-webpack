@@ -1,4 +1,3 @@
-from django.views.generic.detail import SingleObjectMixin
 from .forms import CreateItemForm
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -256,3 +255,48 @@ class HomeView(ItemList):
       context['hero'] = settings.STATIC_URL + 'img/bg-0.jpg'
 
     return context
+
+class ItemTagList(ListView):
+  template_name = 'item/tag_list.html'
+  paginate_by = 6
+  queryset = (
+    Item.objects.all()
+      .select_related('author')
+      .prefetch_related(
+        Prefetch(
+          'comment_set',
+          queryset=Comment.objects.all().select_related('author').order_by('-created_at'),
+          to_attr='comments'
+          )
+        )
+      .prefetch_related(
+        Prefetch(
+          'likes',
+          queryset=Like.objects.all().select_related('user').order_by('-created_at'),
+          to_attr='islike'
+          )
+      )
+      .annotate(
+        Count('comment'),
+        Count('likes'),
+      )
+  )
+
+  def get_queryset(self):
+    q = self.queryset.filter(tags__id=self.kwargs['pk']).order_by('-created_at')
+    if self.request.user.is_authenticated:
+      q = q.annotate(currentuser_islike=Count('likes', filter=Q(likes__user=self.request.user)))
+    if 'sort' in self.request.GET and self.request.GET.get('sort') != 'created_at':
+      sort = self.request.GET.get('sort')
+      try:
+        q = q.annotate(sort=Count(sort)).order_by('-sort', '-created_at')
+      except FieldError:
+        q = q
+    return q
+
+  def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      tag_name = Tag.objects.get(pk=self.kwargs['pk'])
+      context['tag_id'] = self.kwargs['pk']
+      context['tag_name'] = tag_name
+      return context

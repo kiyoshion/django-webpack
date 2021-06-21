@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import ItemList, ItemDetail, ItemCreate, ItemDelete, ItemUpdate
+from .views import ItemList, ItemDetail, ItemCreate, ItemDelete, ItemUpdate, ItemTagList
 
 urlpatterns = [
     path('', ItemList.as_view(), name='item.list'),
@@ -12,4 +12,5 @@ urlpatterns = [
     path('update/<int:pk>/', ItemUpdate.as_view(), name='item.update'),
     path('create_comment/<int:pk>/', views.create_comment, name='item.create_comment'),
     path('like/<int:pk>/', views.like, name='item.like'),
+    path('tag/<int:pk>/', ItemTagList.as_view(), name='item.tag_list'),
 ]

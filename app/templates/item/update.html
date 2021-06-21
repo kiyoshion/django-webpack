@@ -17,6 +17,10 @@
           <label class="block mb-2 text-sm" for="id_body">本文</label>
           <textarea class="input" name="body" cols="40" rows="5" required="" id="id_body">{{ object.body }}</textarea>
         </div>
+        <div class="mb-4">
+          <label class="block mb-2 text-sm" for="id_tags">タグ</label>
+          <input type="text" name="tags" id="id_tags">
+        </div>
         <div class="flex mb-4">
           <div>
             <label class="block mb-2 text-sm" for="id_image">画像</label>
@@ -32,11 +36,6 @@
             </div>
           </div>
         </div>
-        <div>
-          <label class="block mb-2 text-sm" for="id_tags">タグ</label>
-          <input type="text" name="tags" id="id_tags">
-        </div>
-
         <div class="text-center mt-8">
           <button class="btn btn-black btn-wide" type="submit">更新する</button>
         </div>

@@ -56,14 +56,19 @@ const del = (id) => {
   })
 }
 
-const sort = (el) => {
+const sort = (el, ...tag) => {
   const sort = document.querySelector(el),
         params = new URLSearchParams(window.location.search),
         str = params.get('sort')
 
   sort.value = str ? str : 'created_at'
   sort.addEventListener('change', () => {
-    location.href = `/item/?sort=${sort.value}`
+    if (tag.length > 0) {
+      const tagId = tag[0]
+      location.href = `/item/tag/${tagId}/?sort=${sort.value}`
+    } else {
+      location.href = `/item/?sort=${sort.value}`
+    }
   })
 }
 
